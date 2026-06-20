@@ -23,7 +23,7 @@ import { BodyTempState, ChlorinatorState, ICircuitGroupState, ICircuitState, Lig
 import { Body, ChemController, ConfigVersion, EggTimer, Feature, Heater, ICircuit, LightGroup, LightGroupCircuit, PoolSystem, Pump, Schedule, sys } from '../Equipment';
 import { EquipmentTimeoutError, InvalidEquipmentDataError, InvalidEquipmentIdError, InvalidOperationError } from '../Errors';
 import { conn } from '../comms/Comms';
-import { ncp } from "../nixie/Nixie";
+import { ncp } from '../nixie/Nixie';
 import { utils } from '../Constants';
 
 const IAQUALINK_SENDCMD_DEST = 0x00;
@@ -113,7 +113,7 @@ class AquaLinkConfigQueue extends ConfigQueue {
     // bit of work I'll bet we can eliminate these extension objects altogether.
     public processNext(msg?: Outbound) {
         if (this.closed) return;
-        if (typeof msg !== "undefined" && msg !== null)
+        if (typeof msg !== 'undefined' && msg !== null)
             if (!msg.failed) {
                 // Remove all references to future items. We got it so we don't need it again.
                 this.removeItem(msg.action, msg.payload[0]);
@@ -274,7 +274,7 @@ class AquaLinkSystemCommands extends SystemCommands {
                 return 0;
             else
                 return Math.pow(2, state.time.toDate().getUTCDay() - 1);
-        }
+        };
         return new Promise<any>((resolve, reject) => {
             resolve({
                 time: state.time.format(),
@@ -1158,7 +1158,7 @@ class AquaLinkHeaterCommands extends HeaterCommands {
                 sys.board.valueMaps.heatSources.merge([
                     [5, { name: 'ultratemppref', desc: 'Ultratemp Pref', hasCoolSetpoint: htypes.hasCoolSetpoint }],
                     [21, { name: 'ultratemp', desc: 'Ultratemp Only', hasCoolSetpoint: htypes.hasCoolSetpoint }]
-                ])
+                ]);
             }
             else {
                 // only gas

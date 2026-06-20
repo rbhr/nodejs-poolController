@@ -15,12 +15,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { logger } from "../logger/Logger";
+import { logger } from '../logger/Logger';
 // import { https } from "follow-redirects";
 import * as https from 'https';
-import { state } from "../controller/State";
-import { sys } from "../controller/Equipment";
-import { Timestamp } from "../controller/Constants";
+import { state } from '../controller/State';
+import { sys } from '../controller/Equipment';
+import { Timestamp } from '../controller/Constants';
 import { execSync } from 'child_process';
 
 class VersionCheck {
@@ -132,7 +132,7 @@ class VersionCheck {
             headers: {
                 'User-Agent': this.userAgent
             }
-        }
+        };
         let url: string;
         if (typeof redirect === 'undefined') {
             url = `https://${this.gitApiHost}${this.gitLatestReleaseJSONPath}`;
@@ -141,7 +141,7 @@ class VersionCheck {
             url = redirect;
             this.redirects += 1;
         }
-        if (this.redirects >= 20) return Promise.reject(`Too many redirects.`)
+        if (this.redirects >= 20) return Promise.reject(`Too many redirects.`);
         return new Promise<string>((resolve, reject) => {
             try {
                 let req = https.request(url, options, async res => {
@@ -159,22 +159,22 @@ class VersionCheck {
                             if (typeof jdata.tag_name !== 'undefined')
                                 resolve(jdata.tag_name.replace('v', ''));
                             else
-                                reject(`No data returned.`)
+                                reject(`No data returned.`);
                         } catch(parseErr: any){
                             reject(`Error parsing Github response: ${ parseErr.message }`);
                         }
-                    })
+                    });
                 })
                     .end();
                 req.on('error', (err) => {
-                    logger.error(`Error getting Github API latest release.  ${err.message}`)
-                })
+                    logger.error(`Error getting Github API latest release.  ${err.message}`);
+                });
             }
             catch (err) {
                 logger.error('Error contacting Github for latest published release: ' + err);
                 reject(err);
             };
-        })
+        });
     }
     public compare() {
         logger.info(`Checking njsPC versions...`);

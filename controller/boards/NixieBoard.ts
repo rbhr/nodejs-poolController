@@ -16,8 +16,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import * as extend from 'extend';
-import { ncp } from "../nixie/Nixie";
-import { NixieHeaterBase } from "../nixie/heaters/Heater";
+import { ncp } from '../nixie/Nixie';
+import { NixieHeaterBase } from '../nixie/heaters/Heater';
 import { Timestamp, utils } from '../Constants';
 import {SystemBoard, byteValueMap, BodyCommands, FilterCommands, PumpCommands, SystemCommands, CircuitCommands, FeatureCommands, ValveCommands, HeaterCommands, ChlorinatorCommands, ChemControllerCommands, EquipmentIdRange} from './SystemBoard';
 import { logger } from '../../logger/Logger';
@@ -25,7 +25,7 @@ import { state, CircuitState, ICircuitState, ICircuitGroupState, LightGroupState
 import { sys, Equipment, General, PoolSystem, CircuitGroupCircuit, CircuitGroup, ChemController, Circuit, Feature, Valve, ICircuit, Heater, LightGroup, LightGroupCircuit, ControllerType, Filter } from '../Equipment';
 import { BoardProcessError, EquipmentNotFoundError, InvalidEquipmentDataError, InvalidEquipmentIdError, ServiceParameterError } from '../Errors';
 import { delayMgr } from '../Lockouts';
-import { webApp } from "../../web/Server";
+import { webApp } from '../../web/Server';
 import { setTimeout } from 'timers/promises';
 import { setTimeout as setTimeoutSync } from 'timers';
 
@@ -153,7 +153,7 @@ export class NixieBoard extends SystemBoard {
             let arr = [];
             for (let i = 0; i < arrKeys.length; i++) arr.push(extend(true, { val: arrKeys[i] }, this.get(arrKeys[i])));
             return arr;
-        }
+        };
         this.valueMaps.scheduleDays.transform = function (byte) {
             let days = [];
             let b = byte & 0x007F;
@@ -340,7 +340,7 @@ export class NixieBoard extends SystemBoard {
             sys.general.options.clockSource = 'server';
             state.status = sys.board.valueMaps.controllerStatus.transform(0, 0);
             // First lets clear out all the messages.
-            state.equipment.messages.removeItemByCode('EQ')
+            state.equipment.messages.removeItemByCode('EQ');
             // Set up all the default information for the controller.  This should be done
             // for the startup of the system.  The equipment installed at module 0 is the main
             // system descriptor.
@@ -525,16 +525,16 @@ export class NixieBoard extends SystemBoard {
                 let c = await ncp.circuits.initCircuitAsync(circ);
                 // Now we should have the circuit from nixie so check the status to see if it can be
                 // controlled. i.e. The comms are up.
-                await c.validateSetupAsync(circ, state.circuits.getItemById(circ.id))
+                await c.validateSetupAsync(circ, state.circuits.getItemById(circ.id));
             }
             // Now we need to validate the heaters.  Some heaters will be connected via a relay.  If they have comms we will check it.
-            let heaters = sys.heaters.toArray().filter((val) => { return val.controller === 1 });
+            let heaters = sys.heaters.toArray().filter((val) => { return val.controller === 1; });
             for (let i = 0; i < heaters.length; i++) {
                 let heater = heaters[i];
                 let h = await ncp.heaters.initHeaterAsync(heater);
             }
             // If we have relay based pumps, init them here... ss, ds, superflo
-            let pumps = sys.heaters.toArray().filter((val) => { return val.controller === 1 });
+            let pumps = sys.heaters.toArray().filter((val) => { return val.controller === 1; });
             for (let i = 0; i < pumps.length; i++) {
                 let pump = pumps[i];
                 if (pump.type === 65){ // how are we defining ss and superflo?
@@ -1467,7 +1467,7 @@ export class NixieCircuitCommands extends CircuitCommands {
             let circuit = circuits[i];
             // RSG 4/3/24 - This function was executing and returing the results to the array; not pushing the fn to the array.
             //arr.push(sys.board.circuits.setCircuitStateAsync(circuit.circuit, val));
-            arr.push(async () => { await sys.board.circuits.setCircuitStateAsync(circuit.circuit, val) });
+            arr.push(async () => { await sys.board.circuits.setCircuitStateAsync(circuit.circuit, val); });
         }
         // return new Promise<ICircuitGroupState>(async (resolve, reject) => {
         //     await Promise.all(arr).catch((err) => { reject(err) });

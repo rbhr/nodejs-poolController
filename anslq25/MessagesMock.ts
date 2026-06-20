@@ -1,10 +1,10 @@
-import { Inbound, Message, Outbound, Protocol } from "../controller/comms/messages/Messages";
-import { ControllerType } from "../controller/Constants";
-import { sys } from "../controller/Equipment";
-import { logger } from "../logger/Logger";
-import { MockSystemBoard } from "./boards/MockSystemBoard";
-import { mockChlor } from "./chemistry/MockChlorinator";
-import { mockPump, MockPump } from "./pumps/MockPump";
+import { Inbound, Message, Outbound, Protocol } from '../controller/comms/messages/Messages';
+import { ControllerType } from '../controller/Constants';
+import { sys } from '../controller/Equipment';
+import { logger } from '../logger/Logger';
+import { MockSystemBoard } from './boards/MockSystemBoard';
+import { mockChlor } from './chemistry/MockChlorinator';
+import { mockPump, MockPump } from './pumps/MockPump';
 
 
 export class MessagesMock {
@@ -19,7 +19,7 @@ export class MessagesMock {
                             /* case xyz:
                                 */
                             default:
-                                logger.info(`An unprocessed message was received ${msg.toPacket()}`)
+                                logger.info(`An unprocessed message was received ${msg.toPacket()}`);
                                 break;
 
                         }
@@ -77,7 +77,7 @@ export class MessagesMock {
 
                                 case 210: // get intellichem
                                 case 211: // get intellichem
-                                    logger.error(`mock packet ${msg.action} not programmed yet.`)
+                                    logger.error(`mock packet ${msg.action} not programmed yet.`);
                                     break;
                                 case 214: // get intelliflo spa side
                                     sys.anslq25Board.remotes.processSpaCommandRemoteAsync(msg);
@@ -86,10 +86,10 @@ export class MessagesMock {
                                     break;
                                 case 216: // get pump config
                                     sys.anslq25Board.pumps.processPumpConfigAsync(msg);
-                                    break
+                                    break;
                                 case 217: // get intellichlor
                                 case 219: // get pump config
-                                    logger.error(`mock packet ${msg.action} not programmed yet.`)
+                                    logger.error(`mock packet ${msg.action} not programmed yet.`);
                                     break;
                                 case 221: // get valve
                                     sys.anslq25Board.valves.processValveAssignmentsAsync(msg);
@@ -118,7 +118,7 @@ export class MessagesMock {
                                     sys.anslq25Board.system.processSettingsAsync(msg);
                                     break;
                                 case 253: // get sw version
-                                    logger.info(`Mock EasyTouch OCP - Packet ${msg.toShortPacket()} request not programmed yet.`)
+                                    logger.info(`Mock EasyTouch OCP - Packet ${msg.toShortPacket()} request not programmed yet.`);
                                     break;
                                 case 1: // Ack
                                 case 2:  // Shared IntelliCenter/IntelliTouch
@@ -206,7 +206,7 @@ export class MessagesMock {
                 PumpStateMessage.processHayward(msg);
                 break; */
             default:
-                logger.debug(`Unprocessed Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Message ${msg.toPacket()}`);
                 // return new Outbound(Protocol.Broadcast, 0, 0, 0, []);
         }
     }

@@ -15,51 +15,51 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound, Outbound, Protocol } from "../Messages";
-import { state } from "../../../State";
-import { sys, ControllerType } from "../../../Equipment";
-import { conn } from "../../Comms";
-import { logger } from "../../../../logger/Logger";
+import { Inbound, Outbound, Protocol } from '../Messages';
+import { state } from '../../../State';
+import { sys, ControllerType } from '../../../Equipment';
+import { conn } from '../../Comms';
+import { logger } from '../../../../logger/Logger';
 
 // Create a fault object to hold the fault codes and descriptions
 let faultCodes = {
-    0x21: "Software overcurrent",
-    0x22: "DC overvoltage",
-    0x23: "DC undervoltage",
-    0x26: "Hardware overcurrent",
-    0x2A: "Startup failure",
-    0x2D: "Processor - Fatal",
-    0x2E: "IGBT over temperature",
-    0x2F: "Loss of phase",
-    0x30: "Low power",
-    0x31: "Processor - Registers",
-    0x32: "Processor - Program counter",
-    0x33: "Processor - Interrupt/Execution",
-    0x34: "Processor - Clock",
-    0x35: "Processor - Flash Memory",
-    0x36: "Ras fault",
-    0x37: "Processor - ADC",
-    0x3C: "Keypad fault",
-    0x3D: "LVB data flash fault",
-    0x3E: "Comm loss fault - LVB & Drive",
-    0x3F: "Generic fault",
-    0x40: "Coherence fault",
-    0x41: "UL fault",
-    0x42: "SVRS fault type 1",
-    0x43: "SVRS fault type 2",
-    0x44: "SVRS fault type 13",
-}
+    0x21: 'Software overcurrent',
+    0x22: 'DC overvoltage',
+    0x23: 'DC undervoltage',
+    0x26: 'Hardware overcurrent',
+    0x2A: 'Startup failure',
+    0x2D: 'Processor - Fatal',
+    0x2E: 'IGBT over temperature',
+    0x2F: 'Loss of phase',
+    0x30: 'Low power',
+    0x31: 'Processor - Registers',
+    0x32: 'Processor - Program counter',
+    0x33: 'Processor - Interrupt/Execution',
+    0x34: 'Processor - Clock',
+    0x35: 'Processor - Flash Memory',
+    0x36: 'Ras fault',
+    0x37: 'Processor - ADC',
+    0x3C: 'Keypad fault',
+    0x3D: 'LVB data flash fault',
+    0x3E: 'Comm loss fault - LVB & Drive',
+    0x3F: 'Generic fault',
+    0x40: 'Coherence fault',
+    0x41: 'UL fault',
+    0x42: 'SVRS fault type 1',
+    0x43: 'SVRS fault type 2',
+    0x44: 'SVRS fault type 13',
+};
 
 let nackErrors = {
-    0x01: "Command not recognized / illegal",
-    0x02: "Operand out of allowed range",
-    0x03: "Data out of range",
-    0x04: "General failure: fault mode",
-    0x05: "Incorrect command length",
-    0x06: "Command cannot be executed now",
-    0x09: "Buffer error (not used)",
-    0x0A: "Running parameters incomplete (not used)",
-}
+    0x01: 'Command not recognized / illegal',
+    0x02: 'Operand out of allowed range',
+    0x03: 'Data out of range',
+    0x04: 'General failure: fault mode',
+    0x05: 'Incorrect command length',
+    0x06: 'Command cannot be executed now',
+    0x09: 'Buffer error (not used)',
+    0x0A: 'Running parameters incomplete (not used)',
+};
 
 export class RegalModbusStateMessage {
     public static process(msg: Inbound) {
@@ -397,7 +397,7 @@ export class RegalModbusStateMessage {
          * @throws {Error} - If RPM is out of valid range for RegalModbus demand (0–16383).
          */
         if (rpm < 0 || rpm * 4 > 0xFFFF) {
-            throw new Error("RPM is out of valid range for RegalModbus demand (0–16383)");
+            throw new Error('RPM is out of valid range for RegalModbus demand (0–16383)');
         }
 
         const rawDemand = Math.round(rpm * 4); // Scale RPM by 4
@@ -418,7 +418,7 @@ export class RegalModbusStateMessage {
          **/
         const rawDemand = (demandHi << 8) | demandLo; // Combine high and low bytes
         if (rawDemand < 0 || rawDemand > 0xFFFF) {
-            throw new Error("Demand is out of valid range for RPM (0–16383)");
+            throw new Error('Demand is out of valid range for RPM (0–16383)');
         }
         const rpm = Math.round(rawDemand / 4); // Scale back to RPM
         return rpm;

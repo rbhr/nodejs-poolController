@@ -15,18 +15,18 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as express from "express";
-import * as extend from "extend";
+import * as express from 'express';
+import * as extend from 'extend';
 
-import { state, ICircuitState, LightGroupState, ICircuitGroupState, ChemicalDoseState } from "../../../controller/State";
-import { sys } from "../../../controller/Equipment";
+import { state, ICircuitState, LightGroupState, ICircuitGroupState, ChemicalDoseState } from '../../../controller/State';
+import { sys } from '../../../controller/Equipment';
 import { utils } from '../../../controller/Constants';
-import { logger } from "../../../logger/Logger";
-import { DataLogger } from "../../../logger/DataLogger";
-import { conn } from "../../../controller/comms/Comms";
-import { config } from "../../../config/Config";
+import { logger } from '../../../logger/Logger';
+import { DataLogger } from '../../../logger/DataLogger';
+import { conn } from '../../../controller/comms/Comms';
+import { config } from '../../../config/Config';
 
-import { ServiceParameterError } from "../../../controller/Errors";
+import { ServiceParameterError } from '../../../controller/Errors';
 
 export class StateRoute {
     public static initRoutes(app: express.Application) {
@@ -45,8 +45,8 @@ export class StateRoute {
                     inactivityRetry: cfg.inactivityRetry,
                     isOpen: false,
                     mock: cfg.mock || false
-                }
-                if (cfg.netConnect) sport.netConnect = { host: cfg.netHost, port: cfg.netPort }
+                };
+                if (cfg.netConnect) sport.netConnect = { host: cfg.netHost, port: cfg.netPort };
                 else if (typeof cfg.type !== 'undefined' && cfg.type === 'screenlogic'){
                     sport.screenlogic = cfg.screenlogic;
                 }
@@ -69,7 +69,7 @@ export class StateRoute {
                         aborted: stats.sndAborted,
                         retries: stats.sndRetries,
                         failureRate: stats.sndFailureRate
-                    }
+                    };
                 }
                 res.status(200).send(sport);
             }
@@ -486,7 +486,7 @@ export class StateRoute {
         });
         app.put('/state/chlorinator/poolSetpoint', async (req, res, next) => {
             try {
-                let obj = { id: req.body.id, poolSetpoint: parseInt(req.body.setPoint, 10) }
+                let obj = { id: req.body.id, poolSetpoint: parseInt(req.body.setPoint, 10) };
                 let schlor = await sys.board.chlorinator.setChlorAsync(obj);
                 return res.status(200).send(schlor.get(true));
             }
@@ -494,7 +494,7 @@ export class StateRoute {
         });
         app.put('/state/chlorinator/spaSetpoint', async (req, res, next) => {
             try {
-                let obj = { id: req.body.id, spaSetpoint: parseInt(req.body.setPoint, 10) }
+                let obj = { id: req.body.id, spaSetpoint: parseInt(req.body.setPoint, 10) };
                 let schlor = await sys.board.chlorinator.setChlorAsync(obj);
                 return res.status(200).send(schlor.get(true));
             }
@@ -502,7 +502,7 @@ export class StateRoute {
         });
         app.put('/state/chlorinator/superChlorHours', async (req, res, next) => {
             try {
-                let obj = { id: req.body.id, superChlorHours: parseInt(req.body.hours, 10) }
+                let obj = { id: req.body.id, superChlorHours: parseInt(req.body.hours, 10) };
                 let schlor = await sys.board.chlorinator.setChlorAsync(obj);
                 return res.status(200).send(schlor.get(true));
             }
@@ -510,7 +510,7 @@ export class StateRoute {
         });
         app.put('/state/chlorinator/superChlorinate', async (req, res, next) => {
             try {
-                let obj = { id: req.body.id, superChlorinate: utils.makeBool(req.body.superChlorinate) }
+                let obj = { id: req.body.id, superChlorinate: utils.makeBool(req.body.superChlorinate) };
                 let schlor = await sys.board.chlorinator.setChlorAsync(obj);
                 return res.status(200).send(schlor.get(true));
             }

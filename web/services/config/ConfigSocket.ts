@@ -15,13 +15,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as express from "express";
+import * as express from 'express';
 import * as extend from 'extend';
-import { sys, LightGroup, ControllerType, Pump, Valve, Body, General, Circuit, ICircuit, Feature, CircuitGroup, CustomNameCollection, Schedule } from "../../../controller/Equipment";
-import { config } from "../../../config/Config";
-import { logger } from "../../../logger/Logger";
-import { utils } from "../../../controller/Constants";
-import { state } from "../../../controller/State";
+import { sys, LightGroup, ControllerType, Pump, Valve, Body, General, Circuit, ICircuit, Feature, CircuitGroup, CustomNameCollection, Schedule } from '../../../controller/Equipment';
+import { config } from '../../../config/Config';
+import { logger } from '../../../logger/Logger';
+import { utils } from '../../../controller/Constants';
+import { state } from '../../../controller/State';
 import {stopPacketCaptureAsync, startPacketCapture} from '../../../app';
 import { Socket } from 'socket.io';
 export class ConfigSocket {

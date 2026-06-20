@@ -1,6 +1,6 @@
-﻿import { webApp, REMInterfaceServer, InterfaceServerResponse } from "../../web/Server";
-import { logger } from "../../logger/Logger";
-import e = require("express");
+﻿import { webApp, REMInterfaceServer, InterfaceServerResponse } from '../../web/Server';
+import { logger } from '../../logger/Logger';
+import e = require('express');
 export interface INixieControlPanel {
     getREMServers();
     logData(file: string, data: any);
@@ -13,7 +13,7 @@ export class NixieEquipment {
     public get controlPanel(): INixieControlPanel { return this._pmap['ncp']; }
     public get id(): number { return -1; }
     public static get isConnected(): boolean {
-        let servers = webApp.findServersByType("rem");
+        let servers = webApp.findServersByType('rem');
         for (let i = 0; i < servers.length; i++) {
             if (!servers[0].isConnected) return false;
         }

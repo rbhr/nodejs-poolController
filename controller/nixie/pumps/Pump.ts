@@ -2,12 +2,12 @@ import { EquipmentNotFoundError, InvalidEquipmentDataError, InvalidEquipmentIdEr
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Pump, PumpCircuit, PumpCollection, PumpRelay, sys } from "../../../controller/Equipment";
-import { CircuitState, PumpState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Pump, PumpCircuit, PumpCollection, PumpRelay, sys } from '../../../controller/Equipment';
+import { CircuitState, PumpState, state, } from '../../State';
 import { setTimeout as setTimeoutSync, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 import { Outbound, Protocol, Response } from '../../comms/messages/Messages';
 import { conn } from '../../comms/Comms';
 import { setTimeout } from 'timers/promises';
@@ -307,7 +307,7 @@ export class NixiePump extends NixieEquipment {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Pump checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Pump checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(pump: Pump, pstate: PumpState) {
         try {
@@ -315,7 +315,7 @@ export class NixiePump extends NixieEquipment {
     }
     public async closeAsync() {
         try {
-            logger.info(`Nixie Pump closing ${this.pump.name}.`)
+            logger.info(`Nixie Pump closing ${this.pump.name}.`);
             if (typeof this._pollTimer !== 'undefined' || this._pollTimer) clearTimeout(this._pollTimer);
             this._pollTimer = null;
             this._targetSpeed = 0;
@@ -713,7 +713,7 @@ export class NixiePumpRS485 extends NixiePump {
     public async closeAsync() {
         try {
             this.suspendPolling = true;
-            logger.info(`Nixie Pump closing ${this.pump.name}.`)
+            logger.info(`Nixie Pump closing ${this.pump.name}.`);
             if (typeof this._pollTimer !== 'undefined' || this._pollTimer) clearTimeout(this._pollTimer);
             this._pollTimer = null;
             this.closing = true;
@@ -826,7 +826,7 @@ export class NixiePumpVSF extends NixiePumpRS485 {
                 let eff = .03317 * maxSpeed;
                 let gpm = Math.min(Math.round((eff * speed) / maxSpeed), maxFlow);
                 return gpm > 0 ? Math.max(gpm, minFlow) : 0;
-            }
+            };
             for (let i = 0; i < pumpCircuits.length; i++) {
                 let circ = state.circuits.getInterfaceById(pumpCircuits[i].circuit);
                 let pc = pumpCircuits[i];
@@ -1178,7 +1178,7 @@ export class NixiePumpRegalModbus extends NixiePump {
     public async closeAsync() {
         try {
             this.suspendPolling = true;
-            logger.info(`Nixie Pump closing ${this.pump.name}.`)
+            logger.info(`Nixie Pump closing ${this.pump.name}.`);
             if (typeof this._pollTimer !== 'undefined' || this._pollTimer) clearTimeout(this._pollTimer);
             this._pollTimer = null;
             this.closing = true;
@@ -1322,7 +1322,7 @@ export class NixiePumpNeptuneModbus extends NixiePump {
     public async closeAsync() {
         try {
             this.suspendPolling = true;
-            logger.info(`Nixie Pump closing ${this.pump.name}.`)
+            logger.info(`Nixie Pump closing ${this.pump.name}.`);
             if (typeof this._pollTimer !== 'undefined' || this._pollTimer) clearTimeout(this._pollTimer);
             this._pollTimer = null;
             this.closing = true;

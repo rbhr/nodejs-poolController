@@ -16,11 +16,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import extend = require("extend");
+import extend = require('extend');
 import { ClientOptions, DEFAULT_WriteOptions, InfluxDB, Point, WriteApi, WriteOptions, WritePrecisionType } from '@influxdata/influxdb-client';
 import { utils, Timestamp } from '../../controller/Constants';
-import { logger } from "../../logger/Logger";
-import { BaseInterfaceBindings, InterfaceContext, InterfaceEvent } from "./baseInterface";
+import { logger } from '../../logger/Logger';
+import { BaseInterfaceBindings, InterfaceContext, InterfaceEvent } from './baseInterface';
 export class InfluxInterfaceBindings extends BaseInterfaceBindings {
     constructor(cfg) {
         super(cfg);
@@ -52,7 +52,7 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
             const clientOptions: ClientOptions = {
                 url,
                 token: `${baseOpts.username}:${baseOpts.password}`,
-            }
+            };
             influxDB = new InfluxDB(clientOptions);
         }
         else if (baseOpts.version === 2) {
@@ -61,18 +61,18 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
             const clientOptions: ClientOptions = {
                 url,
                 token: baseOpts.token,
-            }
+            };
             influxDB = new InfluxDB(clientOptions);
         }
         // set global tags from context
-        let baseTags = {}
+        let baseTags = {};
         baseOpts.tags.forEach(tag => {
             let toks = {};
-            let sname = this.tokensReplacer(tag.name, undefined, toks, undefined, {})
+            let sname = this.tokensReplacer(tag.name, undefined, toks, undefined, {});
             let svalue = this.tokensReplacer(tag.value, undefined, toks, { vars: {} } as any, {});
             if (typeof sname !== 'undefined' && typeof svalue !== 'undefined' && !sname.includes('@bind') && !svalue.includes('@bind'))
                 baseTags[sname] = svalue;
-        })
+        });
         //this.writeApi.useDefaultTags(baseTags);
         const writeOptions:WriteOptions = {
             /* the maximum points/line to send in a single batch to InfluxDB server */
@@ -98,7 +98,7 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
                 //console.log(lines);
             },
             writeSuccess: function(lines){
-                logger.silly(`InfluxDB successfully wrote ${lines.length} lines.`)
+                logger.silly(`InfluxDB successfully wrote ${lines.length} lines.`);
             },
             writeRetrySkipped: function(entry){
                 logger.silly(`Influx write retry skipped ${JSON.stringify(entry)}`);
@@ -108,12 +108,12 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
             randomRetry: DEFAULT_WriteOptions.randomRetry,
             maxBatchBytes: 4096
            
-        }
+        };
         this.writeApi = influxDB.getWriteApi(org, bucket, 'ms', writeOptions);
 
 
 
-    }
+    };
     public bindEvent(evt: string, ...data: any) {
 
         // if (state.status.value !== sys.board.valueMaps.controllerStatus.getValue('ready')) return; // miss values?  or show errors?  or?
@@ -138,7 +138,7 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
                             if (eval(this.replaceTokens(_point.filter, toks)) === false) continue;
                         }
                         // iterate through points array
-                        let point = new Point(_point.measurement)
+                        let point = new Point(_point.measurement);
                         let point2 = new Point(_point.measurement);
                         _point.tags.forEach(_tag => {
                             let sname = _tag.name;
@@ -158,7 +158,7 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
                                 if (svalue.includes('@bind')) logger.error(`InfluxDB value not bound`);
                                 if (svalue === null) logger.error(`InfluxDB value is null`);
                             }
-                        })
+                        });
                         _point.fields.forEach(_field => {
                             try {
                                 let sname = _field.name;
@@ -230,22 +230,22 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
                                 let sec = ts.getSeconds() - 1;
                                 ts.setSeconds(sec);
                                 point2.timestamp(ts);
-                                logger.silly(`Batching influx ${e.name} inverse data point ${point2.toString()})`)
+                                logger.silly(`Batching influx ${e.name} inverse data point ${point2.toString()})`);
                                 this.writeApi.writePoint(point2);
                             }
                             if (typeof point.toLineProtocol() !== 'undefined') {
-                                logger.silly(`Batching influx ${e.name} data point ${point.toString()}`)
+                                logger.silly(`Batching influx ${e.name} data point ${point.toString()}`);
                                 this.writeApi.writePoint(point);
                                 // this.writeApi.flush()
                                 //     .catch(error => { logger.error(`Error flushing Influx data point ${point.toString()} ${error}`); });
                                 //logger.info(`INFLUX: ${point.toLineProtocol()}`)
                             }
                             else {
-                                logger.silly(`Skipping INFLUX write because some data is missing with ${e.name} event on measurement ${_point.measurement}.`)
+                                logger.silly(`Skipping INFLUX write because some data is missing with ${e.name} event on measurement ${_point.measurement}.`);
                             }
                         }
                         catch (err) {
-                            logger.error(`Error writing to Influx: ${err.message}`)
+                            logger.error(`Error writing to Influx: ${err.message}`);
                         }
                     }
                 }
@@ -254,7 +254,7 @@ export class InfluxInterfaceBindings extends BaseInterfaceBindings {
     }
     public close = () => {
 
-    }
+    };
 }
 
 class InfluxInterfaceEvent extends InterfaceEvent {

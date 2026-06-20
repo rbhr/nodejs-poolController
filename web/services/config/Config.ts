@@ -15,24 +15,24 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as fs from "fs";
-import * as path from "path";
-import * as express from "express";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as express from 'express';
 import * as extend from 'extend';
 import * as multer from 'multer';
-import { sys, LightGroup, ControllerType, Pump, Valve, Body, General, Circuit, ICircuit, Feature, CircuitGroup, CustomNameCollection, Schedule, Chlorinator, Heater, Screenlogic } from "../../../controller/Equipment";
-import { config } from "../../../config/Config";
-import { logger } from "../../../logger/Logger";
-import { utils } from "../../../controller/Constants";
-import { ServiceProcessError } from "../../../controller/Errors";
-import { state } from "../../../controller/State";
+import { sys, LightGroup, ControllerType, Pump, Valve, Body, General, Circuit, ICircuit, Feature, CircuitGroup, CustomNameCollection, Schedule, Chlorinator, Heater, Screenlogic } from '../../../controller/Equipment';
+import { config } from '../../../config/Config';
+import { logger } from '../../../logger/Logger';
+import { utils } from '../../../controller/Constants';
+import { ServiceProcessError } from '../../../controller/Errors';
+import { state } from '../../../controller/State';
 import { stopPacketCaptureAsync, startPacketCapture } from '../../../app';
-import { conn } from "../../../controller/comms/Comms";
-import { webApp, BackupFile, RestoreFile } from "../../Server";
-import { release } from "os";
-import { ScreenLogicComms, sl } from "../../../controller/comms/ScreenLogic";
-import { IntelliCenterWSComms, icws } from "../../../controller/comms/IntelliCenterWS";
-import { screenlogic } from "node-screenlogic";
+import { conn } from '../../../controller/comms/Comms';
+import { webApp, BackupFile, RestoreFile } from '../../Server';
+import { release } from 'os';
+import { ScreenLogicComms, sl } from '../../../controller/comms/ScreenLogic';
+import { IntelliCenterWSComms, icws } from '../../../controller/comms/IntelliCenterWS';
+import { screenlogic } from 'node-screenlogic';
 
 export class ConfigRoute {
     private static securitySessions: Map<string, any> = new Map<string, any>();
@@ -240,14 +240,14 @@ export class ConfigRoute {
         });
         app.get('/config/options/rs485', async (req, res, next) => {
             try {
-                let opts = { ports: [], local: [], screenlogic: {}, ocpws: {} }
+                let opts = { ports: [], local: [], screenlogic: {}, ocpws: {} };
                 let cfg = config.getSection('controller');
                 for (let section in cfg) {
                     if (section.startsWith('comms')) {
                         let cport = extend(true, { enabled: false, netConnect: false, mock: false }, cfg[section]);
                         let port = conn.findPortById(cport.portId || 0);
                         if (typeof cport.type === 'undefined'){
-                            cport.type = cport.netConnect ? 'netConnect' : cport.mock ? 'mock' : 'local'
+                            cport.type = cport.netConnect ? 'netConnect' : cport.mock ? 'mock' : 'local';
                         }
                         if (typeof port !== 'undefined') cport.stats = port.stats;
                         if (port && port.portId === 0 && port.type === 'screenlogic') {
@@ -481,7 +481,7 @@ export class ConfigRoute {
                     pHTank: sys.board.valueMaps.chemControllerAlarms.toArray().filter(el => [0, 32].includes(el.val)),
                     orpTank: sys.board.valueMaps.chemControllerAlarms.toArray().filter(el => [0, 64].includes(el.val)),
                     probeFault: sys.board.valueMaps.chemControllerAlarms.toArray().filter(el => [0, 128].includes(el.val))
-                }
+                };
                 let warnings = {
                     waterChemistry: sys.board.valueMaps.chemControllerWarnings.toArray().filter(el => [0, 1, 2].includes(el.val)),
                     pHLockout: sys.board.valueMaps.chemControllerLimits.toArray().filter(el => [0, 1].includes(el.val)),
@@ -489,7 +489,7 @@ export class ConfigRoute {
                     orpDailyLimitReached: sys.board.valueMaps.chemControllerLimits.toArray().filter(el => [0, 4].includes(el.val)),
                     invalidSetup: sys.board.valueMaps.chemControllerWarnings.toArray().filter(el => [0, 8].includes(el.val)),
                     chlorinatorCommsError: sys.board.valueMaps.chemControllerWarnings.toArray().filter(el => [0, 16].includes(el.val)),
-                }
+                };
                 let opts = {
                     types: sys.board.valueMaps.chemControllerTypes.toArray(),
                     bodies: sys.board.bodies.getBodyAssociations(),
@@ -545,7 +545,7 @@ export class ConfigRoute {
             try {
                 let opts = {
                     servers: await sys.ncp.getREMServers()
-                }
+                };
                 return res.status(200).send(opts);
             } catch (err) { next(err); }
         });
@@ -556,7 +556,7 @@ export class ConfigRoute {
                     type: state.controllerState,
                     equipment: sys.equipment.get(),
                     controllerTypes: sys.getAvailableControllerTypes()
-                }
+                };
                 return res.status(200).send(opts);
             } catch (err) { next(err); }
         });
@@ -569,7 +569,7 @@ export class ConfigRoute {
                     ...sys.anslq25.get(true),
                     controllerTypes: sys.getAvailableControllerTypes(['easytouch', 'intellitouch', 'intellicenter']),
                     rs485ports: await conn.listInstalledPorts()
-                }
+                };
                 return res.status(200).send(opts);
             } catch (err) { next(err); }
         });
@@ -590,13 +590,13 @@ export class ConfigRoute {
         app.get('/config/options/dateTime', (req, res) => {
             let opts = {
                 dow: sys.board.system.getDOW()
-            }
+            };
             return res.status(200).send(opts);
         });
         app.get('/app/options/logger', (req, res) => {
             let opts = {
                 logger: config.getSection('log')
-            }
+            };
             return res.status(200).send(opts);
         });
         app.get('/app/all/', (req, res) => {
@@ -668,7 +668,7 @@ export class ConfigRoute {
                 config.setInterface(req.body);
             }
             catch (err) { next(err); }
-        })
+        });
         app.put('/config/tempSensors', async (req, res, next) => {
             try {
                 await sys.board.system.setTempSensorsAsync(req.body);

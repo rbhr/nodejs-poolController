@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys } from "../../../Equipment";
-import { state } from "../../../State";
-import { ControllerType } from "../../../Constants";
+import { Inbound } from '../Messages';
+import { sys } from '../../../Equipment';
+import { state } from '../../../State';
+import { ControllerType } from '../../../Constants';
 export class OptionsMessage {
     private static decodeFreezeOverride(raw: number): number {
         // v3.008 captures show this as a compact code where 0 => 30 min and 1 => 90 min.
@@ -73,7 +73,7 @@ export class OptionsMessage {
                             }
                             if (manualPriorityByte !== 255) sys.general.options.manualPriority = manualPriorityByte === 1;
                             sys.general.options.manualHeat = msg.extractPayloadByte(isIntellicenterV3 ? 36 : 39) === 1;
-                            let fnTranslateByte = (byte):number => { return (byte & 0x007F) * (((byte & 0x0080) > 0) ? -1 : 1); }
+                            let fnTranslateByte = (byte):number => { return (byte & 0x007F) * (((byte & 0x0080) > 0) ? -1 : 1); };
                             sys.equipment.tempSensors.setCalibration('water1', fnTranslateByte(msg.extractPayloadByte(3)));
                             sys.equipment.tempSensors.setCalibration('solar1', fnTranslateByte(msg.extractPayloadByte(4)));
                             sys.equipment.tempSensors.setCalibration('air',    fnTranslateByte(msg.extractPayloadByte(5)));

@@ -15,20 +15,20 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as path from "path";
-import * as fs from "fs";
+import * as path from 'path';
+import * as fs from 'fs';
 import * as multer from 'multer';
 import * as express from 'express';
 import { SsdpServer} from '../../Server';
-import { state } from "../../../controller/State";
-import { sys } from "../../../controller/Equipment";
-import { webApp } from "../../Server";
-import { config } from "../../../config/Config";
-import { logger } from "../../../logger/Logger";
-import { ServiceParameterError, ServiceProcessError } from "../../../controller/Errors";
-import { BindingsFile } from "../../interfaces/baseInterface";
-import { Utils, utils } from "../../../controller/Constants";
-const extend = require("extend");
+import { state } from '../../../controller/State';
+import { sys } from '../../../controller/Equipment';
+import { webApp } from '../../Server';
+import { config } from '../../../config/Config';
+import { logger } from '../../../logger/Logger';
+import { ServiceParameterError, ServiceProcessError } from '../../../controller/Errors';
+import { BindingsFile } from '../../interfaces/baseInterface';
+import { Utils, utils } from '../../../controller/Constants';
+const extend = require('extend');
 export class UtilitiesRoute {
 
     public static initRoutes(app: express.Application) {
@@ -60,18 +60,18 @@ export class UtilitiesRoute {
                         break;
                     case 'rem':
                         opts = {
-                            options: { protocol: 'http://', host: '', port: 8080, headers: { "content-type": "application/json" } },
+                            options: { protocol: 'http://', host: '', port: 8080, headers: { 'content-type': 'application/json' } },
                             socket: {
                                 transports: ['websocket'], allowEIO3: true, upgrade: false,
                                 reconnectionDelay: 2000, reconnection: true, reconnectionDelayMax: 20000
                             }
-                        }
+                        };
                         break;
                     case 'http':
                     case 'rest':
                         opts = {
                             options: { protocol: 'http://', host: '', port: 80 }
-                        }
+                        };
                         break;
                     case 'influx':
                     case 'influxdb':
@@ -83,7 +83,7 @@ export class UtilitiesRoute {
                                 port: 8601,
                                 retentionPolicy: 'autogen'
                             }
-                        }
+                        };
                         break;
                     case 'influxdb2':
                         opts = {
@@ -96,7 +96,7 @@ export class UtilitiesRoute {
                                 token: '...LuyM84JJx93Qvc7tfaXPbI_mFFjRBjaA==',
                                 org: 'njsPC-org'
                             }
-                        }
+                        };
                         break;
                     case 'mqtt':
                         opts = {
@@ -106,7 +106,7 @@ export class UtilitiesRoute {
                                 rootTopic: "pool/@bind=(state.equipment.model).replace(/ /g,'-').replace(' / ','').toLowerCase();",
                                 retain: true, qos: 0, changesOnly: true
                             }
-                        }
+                        };
                         break;
                     default:
                         return Promise.reject(new ServiceParameterError(`An invalid type was specified ${req.body.type}`, 'PUT: /app/interfaces/add', 'type', req.body.type));
@@ -127,7 +127,7 @@ export class UtilitiesRoute {
                     }
                     if (!isUnique) name = fnEnsureUnique(name, typeof ord === 'undefined' ? 0 : ord++);
                     return typeof ord !== 'undefined' ? `${name}_${ord}` : name;
-                }
+                };
                 name = fnEnsureUnique(name);
                 opts = extend(true, {}, opts, req.body);
                 config.setSection(`web.interfaces.${name}`, opts);
@@ -180,7 +180,7 @@ export class UtilitiesRoute {
                         { val: 2, name: 'mqtt://', desc: 'mqtt://' }
                     ],
                     files: []
-                }
+                };
                 // Read all the files in the custom bindings directory.
                 let cpath = path.posix.join(process.cwd(), '/web/bindings/custom/');
                 let files = fs.readdirSync(cpath);

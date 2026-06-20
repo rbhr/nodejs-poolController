@@ -1,6 +1,6 @@
-import { logger } from "../../logger/Logger";
-import { Inbound, Outbound } from "../../controller/comms/messages/Messages";
-import { conn } from "../../controller/comms/Comms";
+import { logger } from '../../logger/Logger';
+import { Inbound, Outbound } from '../../controller/comms/messages/Messages';
+import { conn } from '../../controller/comms/Comms';
 
 export class MockChlorinator {
   constructor(){}
@@ -38,7 +38,7 @@ export class MockChlorinator {
 
       response.action = 1;
       response.appendPayloadBytes(0, 2);
-      await response.sendAsync()
+      await response.sendAsync();
     }
     catch (err){
       logger.error(`Error sending mock chlor packet ${response.toPacket}`);

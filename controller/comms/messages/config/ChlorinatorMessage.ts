@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { sys, Chlorinator, Cover } from "../../../Equipment";
-import { Inbound } from "../Messages";
-import { state } from "../../../State";
-import { logger } from "../../../../logger/Logger"
+import { sys, Chlorinator, Cover } from '../../../Equipment';
+import { Inbound } from '../Messages';
+import { state } from '../../../State';
+import { logger } from '../../../../logger/Logger';
 export class ChlorinatorMessage {
     public static process(msg: Inbound): void {
         var chlorId;
@@ -158,7 +158,7 @@ export class ChlorinatorMessage {
                 msg.isProcessed = true;
                 break;
             default:
-                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                 break;
         }
     }

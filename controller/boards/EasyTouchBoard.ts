@@ -24,7 +24,7 @@ import { Message, Outbound, Protocol, Response } from '../comms/messages/Message
 import { ControllerType, Timestamp, utils } from '../Constants';
 import { Body, ChemController, ConfigVersion, CustomName, EggTimer, Feature, Heater, ICircuit, LightGroup, LightGroupCircuit, Options, PoolSystem, Pump, Schedule, sys, Valve } from '../Equipment';
 import { InvalidEquipmentDataError, InvalidEquipmentIdError, InvalidOperationError } from '../Errors';
-import { ncp } from "../nixie/Nixie";
+import { ncp } from '../nixie/Nixie';
 import { BodyTempState, ChlorinatorState, ICircuitGroupState, ICircuitState, LightGroupState, state } from '../State';
 import { BodyCommands, byteValueMap, ChemControllerCommands, ChlorinatorCommands, CircuitCommands, ConfigQueue, ConfigRequest, EquipmentIdRange, FeatureCommands, HeaterCommands, PumpCommands, ScheduleCommands, SystemBoard, SystemCommands, ValveCommands } from './SystemBoard';
 
@@ -299,7 +299,7 @@ export class EasyTouchBoard extends SystemBoard {
             let arr = [];
             for (let i = 0; i < arrKeys.length; i++) arr.push(extend(true, { val: arrKeys[i], bitval: arrKeys[i] }, this.get(arrKeys[i])));
             return arr;
-        }
+        };
         this.valueMaps.scheduleDays.transform = function (byte) {
             let days = [];
             let b = byte & 0x007F;
@@ -437,7 +437,7 @@ export class EasyTouchBoard extends SystemBoard {
             state.temps.bodies.removeItemById(2);
         }
         // RKS: 04-14-21 - Remove the spa circuit from the equation if this is a single body panel.
-        if (sys.equipment.maxBodies === 1) sys.board.equipmentIds.invalidIds.merge([1])
+        if (sys.equipment.maxBodies === 1) sys.board.equipmentIds.invalidIds.merge([1]);
         sys.bodies.removeItemById(3);
         sys.bodies.removeItemById(4);
         state.temps.bodies.removeItemById(3);
@@ -612,7 +612,7 @@ export class TouchConfigQueue extends ConfigQueue {
     // bit of work I'll bet we can eliminate these extension objects altogether.
     public processNext(msg?: Outbound) {
         if (this.closed) return;
-        if (typeof msg !== "undefined" && msg !== null)
+        if (typeof msg !== 'undefined' && msg !== null)
             if (!msg.failed) {
                 // Remove all references to future items. We got it so we don't need it again.
                 this.removeItem(msg.action, msg.payload[0]);
@@ -679,7 +679,7 @@ export class TouchConfigQueue extends ConfigQueue {
                 })
                 .finally(() => {
                     setTimeout(() => { self.processNext(out); }, 50);
-                })
+                });
 
         } else {
             // Now that we are done check the configuration a final time.  If we have anything outstanding
@@ -1079,7 +1079,7 @@ class TouchSystemCommands extends SystemCommands {
             let dates = sys.board.valueMaps.scheduleDays.toArray();
             dates.forEach(d => {
                 if (d.dow === _dt.getDay()) dow = d.val;
-            })
+            });
         }
         if (obj.clockSource === 'manual' || obj.clockSource === 'server') sys.general.options.clockSource = obj.clockSource;
         // dow= day of week as expressed as [0=Sunday, 1=Monday, 2=Tuesday, 4=Wednesday, 8=Thursday, 16=Friday, 32=Saturday] 
@@ -1527,7 +1527,7 @@ export class TouchCircuitCommands extends CircuitCommands {
             if (send) {
                 if (sl.enabled) {
                     // SL show in features = 0 = pool; 1 = spa; 2 = features; 4 = lights; 5 = hide
-                    await sl.circuits.setCircuitAsync(parseInt(data.id, 10), nameByte, typeByte, showInFeatures ? 2 : 0, freeze)
+                    await sl.circuits.setCircuitAsync(parseInt(data.id, 10), nameByte, typeByte, showInFeatures ? 2 : 0, freeze);
                 }
                 else {
                     let out = Outbound.create({
@@ -2075,7 +2075,7 @@ class TouchChlorinatorCommands extends ChlorinatorCommands {
                     payload: [0],
                     retries: 3,
                     response: true,
-                })
+                });
                 await out.sendAsync();
             }
             state.emitEquipmentChanges();
@@ -2274,7 +2274,7 @@ class TouchPumpCommands extends PumpCommands {
                 data.backwashTime = typeof data.backwashTime !== 'undefined' ? data.backwashTime : pump.backwashTime;
                 data.body = typeof data.body !== 'undefined' ? data.body : pump.body;
                 data.filterSize = typeof data.filterSize !== 'undefined' ? data.filterSize : pump.filterSize;
-                data.flowStepSize = typeof data.flowStepSize !== 'undefined' ? data.flowStepSize : pump.flowStepSize
+                data.flowStepSize = typeof data.flowStepSize !== 'undefined' ? data.flowStepSize : pump.flowStepSize;
                 data.manualFilterGPM = typeof data.manualFilterGPM !== 'undefined' ? data.manualFilterGPM : pump.manualFilterGPM;
                 data.master = 0;
                 data.maxFlow = typeof data.maxFlow !== 'undefined' ? data.maxFlow : pump.maxFlow;
@@ -2497,7 +2497,7 @@ class TouchPumpCommands extends PumpCommands {
                             let speed = parseInt(c.speed, 10);
                             let flow = parseInt(c.flow, 10);
                             let circuit = parseInt(c.circuit, 10);
-                            if (isNaN(circuit)) return Promise.reject(new InvalidEquipmentDataError(`An invalid pump circuit was supplied for pump ${pump.name}. ${JSON.stringify(c)}`, 'Pump', data))
+                            if (isNaN(circuit)) return Promise.reject(new InvalidEquipmentDataError(`An invalid pump circuit was supplied for pump ${pump.name}. ${JSON.stringify(c)}`, 'Pump', data));
                             if (isNaN(speed)) speed = type.minSpeed;
                             if (isNaN(flow)) flow = type.minFlow;
                             outc.setPayloadByte((i * 2) + 3, circuit, 0);
@@ -2519,7 +2519,7 @@ class TouchPumpCommands extends PumpCommands {
                             }
                             c.id = i;
                             c.circuit = circuit;
-                            if (arrCircuits.includes(c.circuit)) return Promise.reject(new InvalidEquipmentDataError(`Configuration for pump ${pump.name} is not correct circuit #${c.circuit} as included more than once. ${JSON.stringify(c)}`, 'Pump', data))
+                            if (arrCircuits.includes(c.circuit)) return Promise.reject(new InvalidEquipmentDataError(`Configuration for pump ${pump.name} is not correct circuit #${c.circuit} as included more than once. ${JSON.stringify(c)}`, 'Pump', data));
                             arrCircuits.push(c.circuit);
                             if (sl.enabled && send) {
                                 // this is a shortcut for only updating a single pump
@@ -3035,7 +3035,7 @@ class TouchHeaterCommands extends HeaterCommands {
                 sys.board.valueMaps.heatSources.merge([
                     [5, { name: 'ultratemppref', desc: 'Ultratemp Pref', hasCoolSetpoint: htypes.hasCoolSetpoint }],
                     [21, { name: 'ultratemp', desc: 'Ultratemp Only', hasCoolSetpoint: htypes.hasCoolSetpoint }]
-                ])
+                ]);
             }
             else if (ultratempInstalled) {
                 sys.board.valueMaps.heatModes.set(1, { name: 'heatpump', desc: 'Heat Pump' });
@@ -3133,7 +3133,7 @@ class TouchChemControllerCommands extends ChemControllerCommands {
             let orpEnabled = (typeof data.orp !== 'undefined' && typeof data.orp.enabled !== 'undefined') ? utils.makeBool(data.orp.enabled) : chem.orp.enabled;
             let siCalcType = typeof data.siCalcType !== 'undefined' ? sys.board.valueMaps.siCalcTypes.encode(data.siCalcType, 0) : chem.siCalcType;
 
-            let saltLevel = (state.chlorinators.length > 0) ? state.chlorinators.getItemById(1).saltLevel || 1000 : 1000
+            let saltLevel = (state.chlorinators.length > 0) ? state.chlorinators.getItemById(1).saltLevel || 1000 : 1000;
             chem.ph.tank.capacity = 6;
             chem.orp.tank.capacity = 6;
             let acidTankLevel = (typeof data.ph !== 'undefined' && typeof data.ph.tank !== 'undefined' && typeof data.ph.tank.level !== 'undefined') ? parseInt(data.ph.tank.level, 10) : schem.ph.tank.level;

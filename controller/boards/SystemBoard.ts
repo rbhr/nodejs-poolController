@@ -21,7 +21,7 @@ import { Message, Outbound } from '../comms/messages/Messages';
 import { Timestamp, utils } from '../Constants';
 import { Body, ChemController, ChemDoser, Chlorinator, Circuit, CircuitGroup, CircuitGroupCircuit, ConfigVersion, ControllerType, Cover, CustomName, CustomNameCollection, EggTimer, Equipment, Feature, Filter, General, Heater, ICircuit, ICircuitGroup, ICircuitGroupCircuit, LightGroup, LightGroupCircuit, Location, Options, Owner, PoolSystem, Pump, Remote, Schedule, sys, TempSensorCollection, Valve } from '../Equipment';
 import { EquipmentNotFoundError, InvalidEquipmentDataError, InvalidEquipmentIdError, BoardProcessError, InvalidOperationError } from '../Errors';
-import { ncp } from "../nixie/Nixie";
+import { ncp } from '../nixie/Nixie';
 import { HeaterState, BodyTempState, ChemControllerState, ChemDoserState, ChlorinatorState, CircuitGroupState, FilterState, ICircuitGroupState, ICircuitState, LightGroupState, ScheduleState, state, TemperatureState, ValveState, VirtualCircuitState } from '../State';
 import { RestoreResults } from '../../web/Server';
 import { setTimeout } from 'timers/promises';
@@ -142,7 +142,7 @@ export class byteValueMaps {
                 let bit = (1 << (b - 1));
                 if ((byte & bit) > 0) {
                     let v = this.get(b);
-                    if (typeof v !== "undefined") {
+                    if (typeof v !== 'undefined') {
                         return extend(true, {}, v, { val: byte & 0x00FF });
                     }
                 }
@@ -213,7 +213,7 @@ export class byteValueMaps {
                 if (typeof val.val !== 'undefined') return this.transform(parseInt(val.val, 10));
                 else if (typeof val.name !== 'undefined') return this.transformByName(val.name);
             }
-        }
+        };
     }
     public expansionBoards: byteValueMap = new byteValueMap();
     // Identifies which controller manages the underlying equipment.
@@ -663,7 +663,7 @@ export class byteValueMaps {
         [1, { name: 'extrelay', desc: 'External Relay' }],
         [2, { name: 'chlorinator', desc: 'Chlorinator' }],
         [3, { name: 'intrelay', desc: 'Internal Relay' }]
-    ])
+    ]);
     public volumeUnits: byteValueMap = new byteValueMap([
         [0, { name: '', desc: 'No Units' }],
         [1, { name: 'gal', desc: 'Gallons' }],
@@ -898,15 +898,15 @@ export class SystemBoard {
     public async turnOffAllCircuits() {
         // turn off all circuits/features
         for (let i = 0; i < state.circuits.length; i++) {
-            let s = state.circuits.getItemByIndex(i)
+            let s = state.circuits.getItemByIndex(i);
             s.isOn = s.manualPriorityActive = false;
         }
         for (let i = 0; i < state.features.length; i++) {
-            let s = state.features.getItemByIndex(i)
+            let s = state.features.getItemByIndex(i);
             s.isOn = s.manualPriorityActive = false;
         }
         for (let i = 0; i < state.lightGroups.length; i++) {
-            let s = state.lightGroups.getItemByIndex(i)
+            let s = state.lightGroups.getItemByIndex(i);
             s.isOn = s.manualPriorityActive = false;
         }
         for (let i = 0; i < state.temps.bodies.length; i++) {
@@ -946,7 +946,7 @@ export class SystemBoard {
     }
     public get commandSourceAddress(): number { return Message.pluginAddress; }
     public get commandDestAddress(): number { return 16; }
-    public get statusInterval(): number { return this._statusInterval }
+    public get statusInterval(): number { return this._statusInterval; }
     protected killStatusCheck() {
         if (typeof this._statusTimer !== 'undefined' && this._statusTimer) clearTimeout(this._statusTimer);
         this._statusTimer = undefined;
@@ -1080,7 +1080,7 @@ export class SystemCommands extends BoardCommands {
             // Restore the general stuff.
             if (ctx.general.update.length > 0) try {
                 await sys.board.system.setGeneralAsync(ctx.general.update[0]);
-                res.addModuleSuccess('general', 'Update General Settings')
+                res.addModuleSuccess('general', 'Update General Settings');
             } catch (err) { res.addModuleError('general', err); }
             for (let i = 0; i < ctx.customNames.update.length; i++) {
                 let cn = ctx.customNames.update[i];
@@ -1457,7 +1457,7 @@ export class SystemCommands extends BoardCommands {
         return sensors;
     }
     public async setCustomNamesAsync(names: any[]): Promise<CustomNameCollection> {
-        if (!Array.isArray(names)) return Promise.reject(new InvalidEquipmentDataError(`Data is not an array`, 'customNames', names))
+        if (!Array.isArray(names)) return Promise.reject(new InvalidEquipmentDataError(`Data is not an array`, 'customNames', names));
         let arr = [];
         for (let i = 0; i < names.length; i++) { arr.push(sys.board.system.setCustomNameAsync(names[i])); }
         return new Promise<CustomNameCollection>(async (resolve, reject) => {
@@ -1702,7 +1702,7 @@ export class BodyCommands extends BoardCommands {
     }
     public async setBodyAsync(obj: any): Promise<Body> {
         return new Promise<Body>(function (resolve, reject) {
-            let id = parseInt(obj.id, 10); 1
+            let id = parseInt(obj.id, 10); 1;
             if (isNaN(id)) reject(new InvalidEquipmentIdError('Body Id has not been defined', obj.id, 'Body'));
             let body = sys.bodies.getItemById(id, false);
             let sbody = state.temps.bodies.getItemById(id, false);
@@ -2704,7 +2704,7 @@ export class CircuitCommands extends BoardCommands {
     public getLightThemes(type?: number) { return sys.board.valueMaps.lightThemes.toArray(); }
     public getCircuitFunctions() {
         let cf = sys.board.valueMaps.circuitFunctions.toArray();
-        if (!sys.equipment.shared) cf = cf.filter(x => { return x.name !== 'spillway' && x.name !== 'spadrain' });
+        if (!sys.equipment.shared) cf = cf.filter(x => { return x.name !== 'spillway' && x.name !== 'spadrain'; });
         // Do not omit pool/spa from this list when a pool/spa circuit already exists. The same payload is used to
         // label the current circuit type in config UIs; filtering here makes the Pool/Spa row look blank/disabled.
         // Uniqueness is enforced in assertSinglePoolSpaType when saving.
@@ -3031,7 +3031,7 @@ export class CircuitCommands extends BoardCommands {
             arr.push(sys.board.circuits.setCircuitStateAsync(circuit.circuit, val ? circuit.desiredState : !circuit.desiredState));
         }
         return new Promise<ICircuitGroupState>(async (resolve, reject) => {
-            await Promise.all(arr).catch((err) => { reject(err) });
+            await Promise.all(arr).catch((err) => { reject(err); });
             gstate.emitEquipmentChange();
             sys.board.circuits.setEndTime(grp, gstate, val);
             gstate.isOn = val;
@@ -3095,14 +3095,14 @@ export class CircuitCommands extends BoardCommands {
             }
         }
         catch (err) {
-            logger.error(`Error setting end time for ${thing.id}: ${err}`)
+            logger.error(`Error setting end time for ${thing.id}: ${err}`);
         }
     }
     public async turnOffDrainCircuits(ignoreDelays: boolean) {
         try {
             {
                 let drt = sys.board.valueMaps.circuitFunctions.getValue('spadrain');
-                let drains = sys.circuits.filter(x => { return x.type === drt });
+                let drains = sys.circuits.filter(x => { return x.type === drt; });
                 for (let i = 0; i < drains.length; i++) {
                     let drain = drains.getItemByIndex(i);
                     let sdrain = state.circuits.getItemById(drain.id);
@@ -3113,7 +3113,7 @@ export class CircuitCommands extends BoardCommands {
             }
             {
                 let drt = sys.board.valueMaps.featureFunctions.getValue('spadrain');
-                let drains = sys.features.filter(x => { return x.type === drt });
+                let drains = sys.features.filter(x => { return x.type === drt; });
                 for (let i = 0; i < drains.length; i++) {
                     let drain = drains.getItemByIndex(i);
                     let sdrain = state.features.getItemById(drain.id);
@@ -3130,7 +3130,7 @@ export class CircuitCommands extends BoardCommands {
             //
             // Cleaner ciruits can always be turned off.  However, they cannot always be turned on.
             let arrTypes = sys.board.valueMaps.circuitFunctions.toArray().filter(x => { return x.name.indexOf('cleaner') !== -1 && x.body === bstate.id; });
-            let cleaners = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type }) !== -1 });
+            let cleaners = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type; }) !== -1; });
             // So now we should have all the cleaner circuits so lets make sure they are off.
             for (let i = 0; i < cleaners.length; i++) {
                 let cleaner = cleaners.getItemByIndex(i);
@@ -3144,8 +3144,8 @@ export class CircuitCommands extends BoardCommands {
     public async turnOffSpillwayCircuits(ignoreDelays?: boolean) {
         try {
             {
-                let arrTypes = sys.board.valueMaps.circuitFunctions.toArray().filter(x => { return x.name.indexOf('spillway') !== -1 });
-                let spillways = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type }) !== -1 });
+                let arrTypes = sys.board.valueMaps.circuitFunctions.toArray().filter(x => { return x.name.indexOf('spillway') !== -1; });
+                let spillways = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type; }) !== -1; });
                 // So now we should have all the cleaner circuits so lets make sure they are off.
                 for (let i = 0; i < spillways.length; i++) {
                     let spillway = spillways.getItemByIndex(i);
@@ -3156,8 +3156,8 @@ export class CircuitCommands extends BoardCommands {
                 }
             }
             {
-                let arrTypes = sys.board.valueMaps.featureFunctions.toArray().filter(x => { return x.name.indexOf('spillway') !== -1 });
-                let spillways = sys.features.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type }) !== -1 });
+                let arrTypes = sys.board.valueMaps.featureFunctions.toArray().filter(x => { return x.name.indexOf('spillway') !== -1; });
+                let spillways = sys.features.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type; }) !== -1; });
                 // So now we should have all the cleaner features so lets make sure they are off.
                 for (let i = 0; i < spillways.length; i++) {
                     let spillway = spillways.getItemByIndex(i);
@@ -3173,7 +3173,7 @@ export class CircuitCommands extends BoardCommands {
 export class FeatureCommands extends BoardCommands {
     public getFeatureFunctions() {
         let cf = sys.board.valueMaps.featureFunctions.toArray();
-        if (!sys.equipment.shared) cf = cf.filter(x => { return x.name !== 'spillway' && x.name !== 'spadrain' });
+        if (!sys.equipment.shared) cf = cf.filter(x => { return x.name !== 'spillway' && x.name !== 'spadrain'; });
         return cf;
     }
 
@@ -3185,7 +3185,7 @@ export class FeatureCommands extends BoardCommands {
                 try {
                     await sys.board.features.deleteFeatureAsync(f);
                     res.addModuleSuccess('feature', `Remove: ${f.id}-${f.name}`);
-                } catch (err) { res.addModuleError('feature', `Remove: ${f.id}-${f.name}: ${err.message}`) }
+                } catch (err) { res.addModuleError('feature', `Remove: ${f.id}-${f.name}: ${err.message}`); }
             }
             for (let i = 0; i < ctx.features.update.length; i++) {
                 let f = ctx.features.update[i];
@@ -3202,7 +3202,7 @@ export class FeatureCommands extends BoardCommands {
                     sys.features.getItemById(f, true);
                     await sys.board.features.setFeatureAsync(f);
                     res.addModuleSuccess('feature', `Add: ${f.id}-${f.name}`);
-                } catch (err) { res.addModuleError('feature', `Add: ${f.id}-${f.name}: ${err.message}`) }
+                } catch (err) { res.addModuleError('feature', `Add: ${f.id}-${f.name}: ${err.message}`); }
             }
             return true;
         } catch (err) { logger.error(`Error restoring features: ${err.message}`); res.addModuleError('system', `Error restoring features: ${err.message}`); return false; }
@@ -3471,7 +3471,7 @@ export class ChlorinatorCommands extends BoardCommands {
             return Promise.resolve(state.chlorinators.getItemById(id));
         }
         catch (err) {
-            logger.error(`Error setting chlorinator: ${err}`)
+            logger.error(`Error setting chlorinator: ${err}`);
             return Promise.reject(err);
         }
     }
@@ -3489,7 +3489,7 @@ export class ChlorinatorCommands extends BoardCommands {
             return Promise.resolve(chlor);
         }
         catch (err) {
-            logger.error(`Error deleting chlorinator: ${err}`)
+            logger.error(`Error deleting chlorinator: ${err}`);
             return Promise.reject(err);
         }
     }
@@ -3619,7 +3619,7 @@ export class ScheduleCommands extends BoardCommands {
                 // check day match next as we need to iterate another array
                 // let days = sys.board.valueMaps.scheduleDays.transform(sched.scheduleDays);
                 // const days = sys.board.valueMaps.scheduleDays.transform(sched.scheduleDays);
-                const days = (sched.scheduleDays as any).days.map(d => d.dow)
+                const days = (sched.scheduleDays as any).days.map(d => d.dow);
                 // if scheduleDays includes today
                 if (days.includes(state.time.toDate().getDay())) {
                     if (sched.changeHeatSetpoint && (sched.heatSource as any).val !== sys.board.valueMaps.heatSources.getValue('off') && sched.heatSetpoint > 0 && sched.heatSetpoint !== tbody.setPoint) {
@@ -3733,7 +3733,7 @@ export class ScheduleCommands extends BoardCommands {
                 let ssched = state.schedules.getItemByIndex(i);
                 let scirc = state.circuits.getInterfaceById(ssched.circuit);
                 let mOP = sys.board.schedules.manualPriorityActive(ssched);  //sys.board.schedules.manualPriorityActiveByProxy(scirc.id);
-                if (scirc.isOn && !mOP && ssched.scheduleTime.shouldBeOn) schedIsOn = true
+                if (scirc.isOn && !mOP && ssched.scheduleTime.shouldBeOn) schedIsOn = true;
                 else schedIsOn = false;
                 if (schedIsOn !== ssched.isOn) {
                     // if the schedule state changes, it may affect the end time
@@ -4083,7 +4083,7 @@ export class HeaterCommands extends BoardCommands {
             sys.board.heaters.updateHeaterServices();
             sys.board.heaters.syncHeaterStates();
             return heater;
-        } catch (err) { return Promise.reject(`Error deleting heater: ${err.message}`) }
+        } catch (err) { return Promise.reject(`Error deleting heater: ${err.message}`); }
     }
     public updateHeaterServices() {
         let htypes = sys.board.heaters.getInstalledHeaterTypes();

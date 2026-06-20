@@ -15,12 +15,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { webApp } from "../../web/Server";
-import extend=require("extend");
-import { logger } from "../../logger/Logger";
-import { PoolSystem, sys } from "../../controller/Equipment";
-import { State, state } from "../../controller/State";
-import { InterfaceContext, InterfaceEvent, BaseInterfaceBindings } from "./baseInterface";
+import { webApp } from '../../web/Server';
+import extend=require('extend');
+import { logger } from '../../logger/Logger';
+import { PoolSystem, sys } from '../../controller/Equipment';
+import { State, state } from '../../controller/State';
+import { InterfaceContext, InterfaceEvent, BaseInterfaceBindings } from './baseInterface';
 
 export class RuleInterfaceBindings extends BaseInterfaceBindings {
     constructor(cfg) { super(cfg);}

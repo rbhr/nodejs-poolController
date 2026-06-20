@@ -60,7 +60,7 @@ export class ScreenLogicComms {
       this.isOpen = false;
       await this._gateway.closeAsync();
       return Promise.resolve(false);
-    })
+    });
     let unit = await this._gateway.connectAsync();
 
     if (!unit || !unit.gatewayFound || unit.ipAddr === '') {
@@ -85,7 +85,7 @@ export class ScreenLogicComms {
           let _id = Message.nextMessageId;
           msg = { ...msg, _id };
           logger.screenlogic(msg);
-        })
+        });
         let ver = await this._client.getVersionAsync();
         logger.info(`Screenlogic: connect to ${systemName} ${ver.version} at ${unit.ipAddr}:${unit.port}`);
 
@@ -147,7 +147,7 @@ export class ScreenLogicComms {
         } catch (err) {
           logger.error(`Screenlogic: Error getting pump configuration. ${err.message}`);
         }
-      })
+      });
 
       state.status = sys.board.valueMaps.controllerStatus.transform(2, 72);
       state.emitControllerChange();
@@ -192,11 +192,11 @@ export class ScreenLogicComms {
       } catch (err) {
         logger.error(`Screenlogic: Error getting equipment state. ${err.message}`);
       }
-      sys.board.circuits.syncVirtualCircuitStates()
+      sys.board.circuits.syncVirtualCircuitStates();
       state.status = sys.board.valueMaps.controllerStatus.transform(1, 100);
       state.emitControllerChange();
 
-      this._client.on('equipmentState', async function (data) { await Controller.decodeEquipmentState(data); })
+      this._client.on('equipmentState', async function (data) { await Controller.decodeEquipmentState(data); });
       this._client.on('intellichlorConfig', async function (data) {
         await Controller.decodeIntellichlorAsync(data);
       });
@@ -213,23 +213,23 @@ export class ScreenLogicComms {
       // client.on('getScheduleData', async function(){
       // await Controller.decodeSchedules(recurringSched, runOnceSched);});  // how do we know if this is recurring or runonce?  Investigate.
       this._client.on('cancelDelay', async function (data) {
-        logger.silly(`Screenlogic:cancelDelay: ${data}`)
-      }) // not programmed yet});
+        logger.silly(`Screenlogic:cancelDelay: ${data}`);
+      }); // not programmed yet});
       this._client.on('equipmentConfiguration', async function (data) {
-        logger.silly(`Screenlogic:equipConfig ${JSON.stringify(data)}`)
-      })// which one?});
+        logger.silly(`Screenlogic:equipConfig ${JSON.stringify(data)}`);
+      });// which one?});
       this._client.on('getPumpStatus', async function (data) {
         logger.silly(`Screenlogic:getPumpStatus: ${JSON.stringify(data)}`);
         // await Controller.decodePump(1, pumpStatus);
       });  // how do we know which pump id?  Investigate.
       this._client.on('weatherForecast', async function (data) {
-        logger.silly(`Screenlogic:weatherforecast: ${JSON.stringify(data)}`)
+        logger.silly(`Screenlogic:weatherforecast: ${JSON.stringify(data)}`);
       });
       this._client.on('circuitStateChanged', async function (data) {
-        logger.silly(`Screenlogic:circuitstatechanged: ${JSON.stringify(data)}`)
+        logger.silly(`Screenlogic:circuitstatechanged: ${JSON.stringify(data)}`);
       });
       this._client.on('setPointChanged', async function (data) {
-        logger.silly(`Screenlogic:setpointchanged: ${JSON.stringify(data)}`)
+        logger.silly(`Screenlogic:setpointchanged: ${JSON.stringify(data)}`);
       });
 
       // not working
@@ -238,7 +238,7 @@ export class ScreenLogicComms {
         logger.silly(`Screenlogic:heat mode changed: ${JSON.stringify(data)}`);
       });
       this._client.on('intellibriteDelay', async function (data) {
-        logger.silly(`Screenlogic:intellibrite delay: ${JSON.stringify(data)}`)
+        logger.silly(`Screenlogic:intellibrite delay: ${JSON.stringify(data)}`);
       });
       this._client.on('weatherForecastChanged', async function () {
         logger.silly(`Screenlogic:weather forecast changed}`);
@@ -279,7 +279,7 @@ export class ScreenLogicComms {
       this._client.on('loginFailed', (data) => {
         logger.error(`Screenlogic login failed.  Invalid password.`);
         this.isOpen = false;
-      })
+      });
       this._client.on('bytesRead', (bytes) => {
         logger.silly(`Screenlogic:SL Bytes Read: ${bytes}`);
         this.counter.bytesReceived += bytes;
@@ -447,7 +447,7 @@ class Controller {
         // 0 = pool; 1 = spa; 2 = features; 4 = lights; 5 = hide
         showInFeatures: typeof circuit.showInFeatures !== 'undefined' ? circuit.showInFeatures : _circ.function === 16 ? true : _circ.interface !== 4 && _circ.interface !== 5,
 
-      }
+      };
       // errr.... something is wrong.  Why do I have circuit function = 5 here?
       // why does it look like function/interface are reversed??
       /*
@@ -498,7 +498,7 @@ class Controller {
           circuit: _circ.circuitId,
           ...data,
           id: lgCircId,
-        }
+        };
         lgCircId++;
         lightGroup.circuits.push(lgCirc);
       }
@@ -523,7 +523,7 @@ class Controller {
     let circuits = sys.circuits.get();
     for (let i = 0; i < circuits.length; i++) {
       let circuit = sys.circuits.getItemById(circuits[i].id);
-      let _circ = config.circuitArray.find(el => { return el.circuitId === circuit.id });
+      let _circ = config.circuitArray.find(el => { return el.circuitId === circuit.id; });
       if (typeof _circ === 'undefined') {
         sys.circuits.removeItemById(circuit.id);
         state.circuits.removeItemById(circuit.id);
@@ -532,7 +532,7 @@ class Controller {
     let features = sys.features.get();
     for (let i = 0; i < features.length; i++) {
       let feature = sys.features.getItemById(features[i].id);
-      let _circ = config.circuitArray.find(el => { return el.circuitId === feature.id });
+      let _circ = config.circuitArray.find(el => { return el.circuitId === feature.id; });
       if (typeof _circ === 'undefined') {
         sys.features.removeItemById(feature.id);
         state.features.removeItemById(feature.id);
@@ -711,8 +711,8 @@ class Controller {
         let bodyId = bodyIsOn.circuit === 6 ? 1 : 2;
         delayMgr.setCleanerStartDelay(cleaner, bodyId, 60);
       }
-      if (eqstate.poolDelay) { delayMgr.setManualPriorityDelay(state.circuits.getItemById(6)) };
-      if (eqstate.spaDelay) { delayMgr.setManualPriorityDelay(state.circuits.getItemById(1)) };
+      if (eqstate.poolDelay) { delayMgr.setManualPriorityDelay(state.circuits.getItemById(6)); };
+      if (eqstate.spaDelay) { delayMgr.setManualPriorityDelay(state.circuits.getItemById(1)); };
       state.temps.air = eqstate.airTemp;
       for (let i = 0; i < eqstate.bodies.length; i++) {
         let slbody = eqstate.bodies[i];
@@ -770,10 +770,10 @@ class Controller {
       let data = {
         id: i,
         name: customNames.names[i]
-      }
+      };
       try {
 
-        await sys.board.system.setCustomNameAsync(data, false)
+        await sys.board.system.setCustomNameAsync(data, false);
       }
       catch (err) {
         logger.error(`Error setting custom name ${JSON.stringify(data)}`);
@@ -837,7 +837,7 @@ class Controller {
       type,
       cooling,
       body
-    }
+    };
     try {
       let heater = state.heaters.getItemById(1);
       if (heater.type === 0) {
@@ -850,7 +850,7 @@ class Controller {
       await sys.board.heaters.setHeaterAsync(data, false);
     }
     catch (err) {
-      logger.error(`Error setting gas heater: ${err.message}`)
+      logger.error(`Error setting gas heater: ${err.message}`);
     }
     let add = false;
     if (heaterConfig.thermaFloPresent) {
@@ -880,7 +880,7 @@ class Controller {
     // Need to figure out dual body here: body2SolarPresent
     if (add) {
       sys.board.heaters.setHeaterAsync(data, false).catch((err) => {
-        logger.error(`Error setting additional heaters: ${err.message}`)
+        logger.error(`Error setting additional heaters: ${err.message}`);
       });
     }
     if (typeof heaterConfig.units !== 'undefined') state.temps.units = sys.general.options.units = heaterConfig.units;  // 0 = F, 1 = C
@@ -892,7 +892,7 @@ class Controller {
         id: _valve.valveIndex,
         name: _valve.valveName,
         circuit: _valve.deviceId,
-      }
+      };
       await sys.board.valves.setValveAsync(data, false);
     }
     /*     "valves": [
@@ -915,7 +915,7 @@ class Controller {
   public static decodeHighSpeed(highSpeed: number[]) {
     let maxCircuits = sys.controllerType === ControllerType.IntelliTouch ? 8 : 4;
     let arrCircuits = [];
-    let pump = sys.pumps.find(x => { return x.master !== 1 && x.type === 65 });
+    let pump = sys.pumps.find(x => { return x.master !== 1 && x.type === 65; });
     for (let i = 0; i < maxCircuits && i < highSpeed.length; i++) {
       let val = highSpeed[i];
       if (val > 0) arrCircuits.push(val);
@@ -933,22 +933,22 @@ class Controller {
       let remote: Remote = sys.remotes.getItemById(5, true);
       let bActive = false;
       for (let i = 0; i < 10; i++) {
-        remote["button" + i] = remoteDataArray.fourButton[i];
-        bActive = bActive || remote["button" + i] > 0;
+        remote['button' + i] = remoteDataArray.fourButton[i];
+        bActive = bActive || remote['button' + i] > 0;
       }
       remote.isActive = bActive;
       remote.type = 1;
-      remote.name = "is4";
+      remote.name = 'is4';
 
       remote = sys.remotes.getItemById(1, true);
       bActive = false;
       for (let i = 0; i < 10; i++) {
-        remote["button" + i] = remoteDataArray.tenButton[0][i];
-        bActive = bActive || remote["button" + i] > 0;
+        remote['button' + i] = remoteDataArray.tenButton[0][i];
+        bActive = bActive || remote['button' + i] > 0;
       }
       remote.isActive = bActive;
       remote.type = 2;
-      remote.name = "is10";
+      remote.name = 'is10';
     }
     else if (sys.controllerType === ControllerType.IntelliTouch) {
       // Intellitouch
@@ -958,16 +958,16 @@ class Controller {
         let remote: Remote = sys.remotes.getItemById(r + 1, true);
         let bActive = false;
         for (let i = 0; i < 10; i++) {
-          remote["button" + (i + 1)] = remoteDataArray.tenButton[r][i];
-          bActive = bActive || remote["button" + (i + 1)] > 0;
+          remote['button' + (i + 1)] = remoteDataArray.tenButton[r][i];
+          bActive = bActive || remote['button' + (i + 1)] > 0;
         }
         remote.isActive = bActive;
         remote.type = 2;
-        remote.name = "is10";
+        remote.name = 'is10';
         if (r === 3) {
           let remote5 = sys.remotes.getItemById(5);
           let remote6 = sys.remotes.getItemById(6);
-          remote5.name = remote6.name = "is4";
+          remote5.name = remote6.name = 'is4';
           remote5.type = remote6.type = 1;
           if (!remote.button5 && !remote.button10) {
             remote.isActive = false;
@@ -1001,7 +1001,7 @@ class Controller {
 
     if (!remote.button1 && !remote.button2 && !remote.button3 && !remote.button4) remote.isActive = false;
     else remote.isActive = true;
-    remote.name = "QuickTouch";
+    remote.name = 'QuickTouch';
   }
   public static async decodeIntellichlorAsync(slchlor: SLIntellichlorData) {
     // Intellichlor: {"installed":false,"status":1,"poolSetPoint":12,"spaSetPoint":0,"salt":0,"flags":0,"superChlorTimer":0}
@@ -1014,7 +1014,7 @@ class Controller {
         spaSetpoint: slchlor.spaSetPoint,
         model: chlor.model || 0,
         body: 32
-      }
+      };
       await sys.board.chlorinator.setChlorAsync(data, false);
       let chlorState = state.chlorinators.getItemById(1, true);
       chlorState.saltLevel = slchlor.salt;
@@ -1050,7 +1050,7 @@ class Controller {
       },
       type: 2
 
-    }
+    };
     try {
 
       await sys.board.chemControllers.setChemControllerAsync(data, false);
@@ -1069,7 +1069,7 @@ class Controller {
   public static async decodePumpAsync(pDataArr: any) {
     pDataArr.forEach(async (pData, idx) => {
       await sys.board.pumps.setPumpAsync(pData, false);
-    })
+    });
   }
   public static async decodePumpStatusAsync(id: number, slpump: SLPumpStatusData) {
     /*   {
@@ -1121,8 +1121,8 @@ class Controller {
           changeHeatSetPoint: slsched.heatCmd > 0,
           heatSetPoint: slsched.heatSetPoint,
           schedType: 128 // recurring
-        }
-        await sys.board.schedules.setScheduleAsync(data, false)
+        };
+        await sys.board.schedules.setScheduleAsync(data, false);
       } catch (err) {
         logger.error(`Error setting schedule ${slsched.scheduleId}.  ${err.message}`);
       }
@@ -1140,7 +1140,7 @@ class Controller {
           changeHeatSetPoint: slsched.heatCmd > 0,
           heatSetPoint: slsched.heatSetPoint,
           schedType: 0 // runonce
-        }
+        };
         await sys.board.schedules.setScheduleAsync(data, false);
         sys.board.system.setTZ();
       } catch (err) {
@@ -1321,23 +1321,23 @@ export class SLCircuits extends SLCommands {
         // [196, { name: 'white', desc: 'White', types: ['intellibrite'], sequence: 11 }],
         case 196:
           lightTheme = WHITE;
-          break
+          break;
         // [197, { name: 'magenta', desc: 'Magenta', types: ['intellibrite'], sequence: 12 }],
         case 197:
           lightTheme = MAGENTA;
-          break
+          break;
         // [208, { name: 'thumper', desc: 'Thumper', types: ['magicstream'] }],
         case 208:
           lightTheme = MS_THUMPER;
-          break
+          break;
         // [209, { name: 'hold', desc: 'Hold', types: ['magicstream'] }],
         case 209:
           lightTheme = MS_HOLD;
-          break
+          break;
         // [210, { name: 'reset', desc: 'Reset', types: ['magicstream'] }],
         case 210:
           lightTheme = MS_RESET;
-          break
+          break;
         // [211, { name: 'mode', desc: 'Mode', types: ['magicstream'] }],
         // [254, { name: 'unknown', desc: 'unknow
         default:
@@ -1431,7 +1431,7 @@ export class SLChlor extends SLCommands {
   public async setChlorOutputAsync(poolSetpoint: number, spaSetpoint: number) {
     try {
       let res = await this._unit.chlor.setIntellichlorOutputAsync(poolSetpoint, spaSetpoint);
-      if (!res) return Promise.reject(`Screenlogic: Unable to add schedule.`)
+      if (!res) return Promise.reject(`Screenlogic: Unable to add schedule.`);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -1439,7 +1439,7 @@ export class SLChlor extends SLCommands {
   public async setChlorEnabledAsync(isActive: boolean) {
     try {
       let res = await this._unit.chlor.setIntellichlorIsActiveAsync(isActive);
-      if (!res) return Promise.reject(`Screenlogic: Unable to add schedule.`)
+      if (!res) return Promise.reject(`Screenlogic: Unable to add schedule.`);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -1531,7 +1531,7 @@ export class SLSchedule extends SLCommands {
       await this._unit.schedule.setScheduleEventByIdAsync(id, circuit, startTime, endTime, schedDays, flags, SLheatSource, setPoint);
       return id;
     } catch (err) {
-      logger.error(`Screenlogic: Error setting schedule ${id}`)
+      logger.error(`Screenlogic: Error setting schedule ${id}`);
     }
   }
   public async deleteScheduleAsync(id: number) {
@@ -1576,7 +1576,7 @@ export class SLPump extends SLCommands {
           return Promise.resolve(pump);
         }
         else {
-          return Promise.reject(new InvalidEquipmentDataError('Unable to set pump speed', 'pump', pump))
+          return Promise.reject(new InvalidEquipmentDataError('Unable to set pump speed', 'pump', pump));
         };
       }
     }
@@ -1616,13 +1616,13 @@ export class SLController extends SLCommands {
         break;
       }
       case 'pump': {
-        let idx = pumps.findIndex(el => { console.log(el.id); return el.id === obj.id; })
+        let idx = pumps.findIndex(el => { console.log(el.id); return el.id === obj.id; });
         if (idx >= 0) pumps = extend({}, true, pumps[idx], obj);
         else return Promise.reject(`Screenlogic: No pump found by that id: ${obj}`);
         break;
       }
       case 'heater': {
-        let idx = heaters.findIndex(el => { console.log(el.id); return el.id === obj.id; })
+        let idx = heaters.findIndex(el => { console.log(el.id); return el.id === obj.id; });
         if (idx >= 0) heaters = extend({}, true, heaters[idx], obj);
         else return Promise.reject(`Screenlogic: No pump found by that id: ${obj}`);
         break;
@@ -1640,7 +1640,7 @@ export class SLController extends SLCommands {
       pumps,
       spaCommand,
       alarm
-    }
+    };
     return Promise.reject(new InvalidOperationError('Operation not implemented yet.', 'setEquipmentConfigurationAsync'));
     // await this._unit.equipment.setEquipmentConfigurationAsync(data);
   }

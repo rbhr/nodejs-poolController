@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { PumpState, HeaterState, BodyTempState, ICircuitState, state } from "./State";
-import { Equipment, sys } from "./Equipment";
-import { Timestamp, utils } from "./Constants";
-import { logger } from "../logger/Logger";
-import { webApp } from "../web/Server";
+import { PumpState, HeaterState, BodyTempState, ICircuitState, state } from './State';
+import { Equipment, sys } from './Equipment';
+import { Timestamp, utils } from './Constants';
+import { logger } from '../logger/Logger';
+import { webApp } from '../web/Server';
 // LOCKOUT PRIMER
 // Lockouts are either time based (Delays) or based upon the current state configuration for
 // the system.  So in some cases circuits can only be engaged in pool mode or in spa mode.  In
@@ -466,7 +466,7 @@ export class DelayManager extends Array<EquipmentDelay> {
     }
     public cancelHeaterCooldownDelays() { this.cancelDelaysByType('heaterCooldownDelay'); }
     public setCleanerStartDelay(cs: ICircuitState, bodyId: number, delay?: number) {
-        let cds = this.filter(x => x.type === ('cleanerStartDelay' || 'cleanerSolarDelay'));
+        let cds = this.filter(x => x.type === 'cleanerStartDelay' || x.type === 'cleanerSolarDelay');
         let startDelay: CleanerStartDelay;
         for (let i = 0; i < cds.length; i++) {
             let delay = cds[i] as unknown as ICleanerDelay;
@@ -516,7 +516,7 @@ export class DelayManager extends Array<EquipmentDelay> {
             }
         }
     }
-    public setSolarStartupDelay
+    public setSolarStartupDelay;
     protected cancelDelaysByType(type: string) {
         let delays = this.filter(x => x.type === type);
         for (let i = 0; i < delays.length; i++) {

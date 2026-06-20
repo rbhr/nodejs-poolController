@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { state } from "../../../State";
-import { sys, ControllerType } from "../../../Equipment";
-import { logger } from "../../../../logger/Logger";
+import { Inbound } from '../Messages';
+import { state } from '../../../State';
+import { sys, ControllerType } from '../../../Equipment';
+import { logger } from '../../../../logger/Logger';
 
 export class IntelliValveStateMessage {
     public static process(msg: Inbound) {

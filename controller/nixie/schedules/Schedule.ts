@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { CircuitGroup, CircuitGroupCircuit, ICircuitGroup, ICircuitGroupCircuit, LightGroup, LightGroupCircuit, Schedule, ScheduleCollection, sys } from "../../../controller/Equipment";
-import { ICircuitState, CircuitGroupState, ICircuitGroupState, ScheduleState, ScheduleTime, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { CircuitGroup, CircuitGroupCircuit, ICircuitGroup, ICircuitGroupCircuit, LightGroup, LightGroupCircuit, Schedule, ScheduleCollection, sys } from '../../../controller/Equipment';
+import { ICircuitState, CircuitGroupState, ICircuitGroupState, ScheduleState, ScheduleTime, state, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 import { delayMgr } from '../../../controller/Lockouts';
 import { time } from 'console';
 
@@ -49,12 +49,12 @@ export class NixieScheduleCollection extends NixieEquipmentCollection<NixieSched
             // This is a listing of all the active schedules that are either currently on or should be on.
             let sscheds: ScheduleState[] = state.schedules.getActiveSchedules();
             // Go through all the schedules and hash them by circuit id.
-            let circuits: { circuitId: number, cstate: ICircuitState, hasNixie: boolean, sscheds: ScheduleState[] }[] = []
+            let circuits: { circuitId: number, cstate: ICircuitState, hasNixie: boolean, sscheds: ScheduleState[] }[] = [];
             for (let i = 0; i < sscheds.length; i++) {
                 // We only care about schedules that are currently running or should be running.
                 if (!sscheds[i].isOn && !sscheds[i].scheduleTime.shouldBeOn) continue;
                 let circ = circuits.find(elem => elem.circuitId === sscheds[i].circuit);
-                let sched = sys.schedules.getItemById(sscheds[i].id)
+                let sched = sys.schedules.getItemById(sscheds[i].id);
                 if (typeof circ === 'undefined') circuits.push({
                     circuitId: sscheds[i].circuit,
                     cstate: state.circuits.getInterfaceById(sscheds[i].circuit), hasNixie: sched.master !== 0, sscheds: [sscheds[i]]

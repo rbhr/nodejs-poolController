@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { Inbound } from '../Messages';
 import { sys, Cover } from '../../../Equipment';
 import { state } from '../../../State';
-import { logger } from "../../../../logger/Logger";
+import { logger } from '../../../../logger/Logger';
 
 // Cover cat=14 payload parser.
 // Authoritative packet reference: .plan/v3.008/covers-packet-reference.md

@@ -190,7 +190,7 @@ export class State implements IState {
             clearTimeout(this._emitTimerDirty);
             this._emitTimerDirty = null;
         }
-        if (this._hasChanged) { this._emitTimerDirty = setTimeout(function () { self.emitControllerChange(); }, 3000) }
+        if (this._hasChanged) { this._emitTimerDirty = setTimeout(function () { self.emitControllerChange(); }, 3000); }
     }
     public get controllerState() {
         var self = this;
@@ -728,7 +728,7 @@ class EqStateCollection<T> {
         });
     }
     public sort(fn: (a, b) => number) { this.data.sort(fn); }
-    public get(bCopy?: boolean) { return typeof bCopy === 'undefined' || !bCopy ? this.data : JSON.parse(JSON.stringify(this.data)) };// extend(true, {}, this.data); }
+    public get(bCopy?: boolean) { return typeof bCopy === 'undefined' || !bCopy ? this.data : JSON.parse(JSON.stringify(this.data)); };// extend(true, {}, this.data); }
     public getExtended(): any {
         let arr = [];
         for (let i = 0; i < this.length; i++) {
@@ -876,8 +876,8 @@ export class EquipmentState extends EqState {
     // This could be extended to include all the expansion panels but not sure why.
     public getExtended() {
         let obj = this.get(true);
-        obj.softwareVersion = sys.equipment.controllerFirmware || "";
-        obj.bootLoaderVersion = sys.equipment.bootloaderVersion || "";
+        obj.softwareVersion = sys.equipment.controllerFirmware || '';
+        obj.bootLoaderVersion = sys.equipment.bootloaderVersion || '';
         return obj;
     }
 
@@ -1298,7 +1298,7 @@ export class ScheduleTime extends ChildEqState {
                 let tmEnd = times.endTime ? times.endTime.getTime() : NaN;
                 if (isNaN(tmStart) || isNaN(tmEnd) || time < tmStart || time > tmEnd) return false;
                 return true;
-            }
+            };
             let tm = ts.getTime();
             if (fnInRange(tm, ttimes)) {
                 // Check the dow.
@@ -1582,7 +1582,7 @@ export class CircuitGroupState extends EqState implements ICircuitGroupState, IC
     }
     public get isOn(): boolean { return this.data.isOn; }
     public set isOn(val: boolean) { this.setDataVal('isOn', val); }
-    public get priority(): string { return this.data.priority || 'manual' }
+    public get priority(): string { return this.data.priority || 'manual'; }
     public set priority(val: string) { this.setDataVal('priority', val); }
     public get endTime(): Timestamp {
         if (typeof this.data.endTime === 'undefined') return undefined;
@@ -1675,7 +1675,7 @@ export class LightGroupState extends EqState implements ICircuitGroupState, ICir
             this.hasChanged = true;
         }
     }
-    public get priority(): string { return this.data.priority || 'manual' }
+    public get priority(): string { return this.data.priority || 'manual'; }
     public set priority(val: string) { this.setDataVal('priority', val); }
     public get endTime(): Timestamp {
         if (typeof this.data.endTime === 'undefined') return undefined;
@@ -1955,7 +1955,7 @@ export class HeaterState extends EqState {
     public set startupDelay(val: boolean) { this.setDataVal('startupDelay', val); }
     public get shutdownDelay(): boolean { return this.data.shutdownDelay; }
     public set shutdownDelay(val: boolean) { this.setDataVal('shutdownDelay', val); }
-    public get bodyId(): number { return this.data.bodyId || 0 }
+    public get bodyId(): number { return this.data.bodyId || 0; }
     public set bodyId(val: number) { this.setDataVal('bodyId', val); }
 
 }
@@ -2003,7 +2003,7 @@ export class FeatureState extends EqState implements ICircuitState {
     }
     public get showInFeatures(): boolean { return this.data.showInFeatures; }
     public set showInFeatures(val: boolean) { this.setDataVal('showInFeatures', val); }
-    public get priority(): string { return this.data.priority || 'manual' }
+    public get priority(): string { return this.data.priority || 'manual'; }
     public set priority(val: string) { this.setDataVal('priority', val); }
     public get endTime(): Timestamp {
         if (typeof this.data.endTime === 'undefined') return undefined;
@@ -2029,7 +2029,7 @@ export class VirtualCircuitState extends EqState implements ICircuitState {
     public set nameId(val: number) { this.setDataVal('nameId', val); }
     public get isOn(): boolean { return this.data.isOn; }
     public set isOn(val: boolean) { this.setDataVal('isOn', val); }
-    public get priority(): string { return 'manual' } // These are always manual priority
+    public get priority(): string { return 'manual'; } // These are always manual priority
     public set priority(val: string) { ; }
     public get type() { return typeof this.data.type !== 'undefined' ? this.data.type.val : -1; }
     public set type(val: number) {
@@ -2146,7 +2146,7 @@ export class CircuitState extends EqState implements ICircuitState {
             this.hasChanged = true;
         }
     }
-    public get scheduled(): boolean { return this.data.scheduled || false }
+    public get scheduled(): boolean { return this.data.scheduled || false; }
     public set scheduled(val: boolean) { this.setDataVal('scheduled', val); }
     public get startTime(): Timestamp {
         if (typeof this.data.startTime === 'undefined') return undefined;
@@ -3079,7 +3079,7 @@ export class ChemicalState extends ChildEqState implements IChemicalState {
         dH.appendDemand(time, val);
     }
     public get type() { return this.data.type; };
-    public get demandHistory() { return new ChemicalDemandState(this.data, 'demandHistory', this) };
+    public get demandHistory() { return new ChemicalDemandState(this.data, 'demandHistory', this); };
     public get enabled(): boolean { return this.data.enabled; }
     public set enabled(val: boolean) { this.data.enabled = val; }
     public get freezeProtect(): boolean { return this.data.freezeProtect; }
@@ -3399,7 +3399,7 @@ export class ChemicalDoseState extends DataLoggerEntry {
     public parse(entry: string) {
         // let obj = typeof entry !== 'undefined' ? JSON.parse(entry, this.dateParser) : {};
         let obj = typeof entry !== 'undefined' ? JSON.parse(entry) : {};
-        for (const prop in obj) {obj[prop] = this.dateParser(prop, obj[prop])}
+        for (const prop in obj) {obj[prop] = this.dateParser(prop, obj[prop]);}
         if (typeof obj.setpoint !== 'undefined') this.setpoint = obj.setpoint;
         if (typeof obj.method !== 'undefined') this.method = obj.method;
         if (typeof obj.start !== 'undefined') this.start = obj.start;

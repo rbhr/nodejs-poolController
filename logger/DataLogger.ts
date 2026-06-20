@@ -416,7 +416,7 @@ export class DataLoggerEntry {
             console.log(`A DATALOGGER ENTRY WAS NOT DEFINED *************************`);
         }
         else if (entry === '') {
-            console.log(`THE INCOMING DATALOGGER ENTRY WAS EMPTY ***************************`)
+            console.log(`THE INCOMING DATALOGGER ENTRY WAS EMPTY ***************************`);
         }
         let o = extend(true, this, obj);
     }

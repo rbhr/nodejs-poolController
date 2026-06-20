@@ -22,15 +22,15 @@ import { SerialPort, SerialPortMock, SerialPortOpenOptions } from 'serialport';
 import { setTimeout } from 'timers';
 import { config } from '../../config/Config';
 import { logger } from '../../logger/Logger';
-import { webApp } from "../../web/Server";
-import { utils } from "../Constants";
-import { sys } from "../Equipment";
+import { webApp } from '../../web/Server';
+import { utils } from '../Constants';
+import { sys } from '../Equipment';
 import { InvalidEquipmentDataError, InvalidOperationError, OutboundMessageError } from '../Errors';
-import { state } from "../State";
+import { state } from '../State';
 import { Inbound, Message, Outbound, Response } from './messages/Messages';
 import { sl } from './ScreenLogic';
 import { icws } from './IntelliCenterWS';
-const extend = require("extend");
+const extend = require('extend');
 export class Connection {
     constructor() { }
     public rs485Ports: RS485Port[] = [];
@@ -54,7 +54,7 @@ export class Connection {
             config.removeSection(section);
             state.equipment.messages.removeItemByCode(`rs485:${portId}:connection`);
             return cfg;
-        } catch (err) { logger.error(`Error deleting aux port`) }
+        } catch (err) { logger.error(`Error deleting aux port`); }
     }
     public async setScreenlogicAsync(data: any) {
         let ccfg = config.getSection('controller.screenlogic');
@@ -88,21 +88,21 @@ export class Connection {
             let pdata = config.getSection(section, {
                 portId: portId,
                 type: 'local',
-                rs485Port: "/dev/ttyUSB0",
+                rs485Port: '/dev/ttyUSB0',
                 portSettings: { baudRate: 9600, dataBits: 8, parity: 'none', stopBits: 1, flowControl: false, autoOpen: false, lock: false },
                 netSettings: { allowHalfOpen: false, keepAlive: false, keepAliveInitialDelay: 1000 },
                 mock: false,
                 netConnect: false,
-                netHost: "raspberrypi",
+                netHost: 'raspberrypi',
                 netPort: 9801,
                 inactivityRetry: 10
             });
             if (portId === 0) {
                 pdata.screenlogic = {
-                    connectionType: "local",
-                    systemName: "Pentair: 00-00-00",
+                    connectionType: 'local',
+                    systemName: 'Pentair: 00-00-00',
                     password: 1234
-                }
+                };
             }
 
             pdata.enabled = typeof data.enabled !== 'undefined' ? utils.makeBool(data.enabled) : utils.makeBool(pdata.enabled);
@@ -181,21 +181,21 @@ export class Connection {
             config.setSection(section, pdata);
             let cfg = config.getSection(section, {
                 type: 'local',
-                rs485Port: "/dev/ttyUSB0",
+                rs485Port: '/dev/ttyUSB0',
                 portSettings: { baudRate: 9600, dataBits: 8, parity: 'none', stopBits: 1, flowControl: false, autoOpen: false, lock: false },
                 netSettings: { allowHalfOpen: false, keepAlive: false, keepAliveInitialDelay: 5 },
                 mock: false,
                 netConnect: false,
-                netHost: "raspberrypi",
+                netHost: 'raspberrypi',
                 netPort: 9801,
                 inactivityRetry: 10
             });
             if (portId === 0) {
                 cfg.screenlogic = {
-                    connectionType: "local",
-                    systemName: "Pentair: 00-00-00",
+                    connectionType: 'local',
+                    systemName: 'Pentair: 00-00-00',
                     password: 1234
-                }
+                };
             }
             existing = this.getPortByCfg(cfg);
 
@@ -283,7 +283,7 @@ export class Connection {
             }
         }
     }
-    public 
+    public; 
     getPortByCfg(cfg: any) {
         let port = this.findPortById(cfg.portId || 0);
         if (typeof port === 'undefined') {
@@ -407,8 +407,8 @@ export class Connection {
             // msg.portId = port.portId;
 
             //     msg.process();
-            setTimeout(() => { port.pushIn(Buffer.from(_msg.toPacket())) }, 100);
-            logger.silly(`mock inbound write bytes port:${_msg.portId} id:${_msg.id} bytes:${_msg.toShortPacket()}`)
+            setTimeout(() => { port.pushIn(Buffer.from(_msg.toPacket())); }, 100);
+            logger.silly(`mock inbound write bytes port:${_msg.portId} id:${_msg.id} bytes:${_msg.toShortPacket()}`);
             // logger.packet()
             // (msg as Inbound).process();
             // msgs.push(msg);
@@ -512,7 +512,7 @@ export class Connection {
                     reject(err);
                 }
                 else resolve(true);
-            }
+            };
             port.emitter.emit('messagewrite', msg);
             // let ports = this.getBroadcastPorts(port);
             //}
@@ -520,7 +520,7 @@ export class Connection {
 
 
 
-        })
+        });
     }
 
     // public sendMockPacket(msg: Inbound) {
@@ -608,12 +608,12 @@ export class RS485Port {
         });
 
     }
-    public get name(): string { return this.portId === 0 ? 'Primary' : `Aux${this.portId}` }
+    public get name(): string { return this.portId === 0 ? 'Primary' : `Aux${this.portId}`; }
     public isRTS: boolean = true;
     public reconnects: number = 0;
     public emitter: EventEmitter;
     public get portId() { return typeof this._cfg !== 'undefined' && typeof this._cfg.portId !== 'undefined' ? this._cfg.portId : 0; }
-    public get type() { return typeof this._cfg.type !== 'undefined' ? this._cfg.type : this._cfg.netConnect ? 'netConnect' : this._cfg.mock ? 'mock' : 'local' };
+    public get type() { return typeof this._cfg.type !== 'undefined' ? this._cfg.type : this._cfg.netConnect ? 'netConnect' : this._cfg.mock ? 'mock' : 'local'; };
     public isOpen: boolean = false;
     public closing: boolean = false;
     private _cfg: any;
@@ -625,7 +625,7 @@ export class RS485Port {
     public get enabled(): boolean { return typeof this._cfg !== 'undefined' && this._cfg.enabled; }
     public counter: Counter = new Counter();
     private procTimer: NodeJS.Timeout;
-    public writeTimer: NodeJS.Timeout
+    public writeTimer: NodeJS.Timeout;
     private _processing: boolean = false;
     private _lastTx: number = 0;
     private _lastRx: number = 0;
@@ -766,7 +766,7 @@ export class RS485Port {
             if (this._cfg.mock) {
                 this.mock = true;
                 let portPath = 'MOCK_PORT';
-                SerialPortMock.binding.createPort(portPath)
+                SerialPortMock.binding.createPort(portPath);
                 // SerialPortMock.binding = SerialPortMock;
                 // SerialPortMock.createPort(portPath, { echo: false, record: true });
                 let opts: SerialPortOpenOptions<AutoDetectTypes> = { path: portPath, autoOpen: false, baudRate: 9600 };
@@ -804,7 +804,7 @@ export class RS485Port {
                 // won't be called until long after the promise is resolved above.  Yes we should never reject this promise.  The resolution is true
                 // for a successul connect and false otherwise.
                 sp.on('open', () => {
-                    if (typeof this._port !== 'undefined') logger.info(`Serial Port ${this.portId}: ${this._cfg.rs485Port} recovered from lost connection.`)
+                    if (typeof this._port !== 'undefined') logger.info(`Serial Port ${this.portId}: ${this._cfg.rs485Port} recovered from lost connection.`);
                     else logger.info(`Serial port: ${sp.path} request to open successful ${sp.baudRate}b ${sp.port.openOptions.dataBits}-${sp.port.openOptions.parity}-${sp.port.openOptions.stopBits}`);
                     this._port = sp;
                     this.isOpen = true;
@@ -822,7 +822,7 @@ export class RS485Port {
                 sp.on('close', (err) => {
                     this.isOpen = false;
                     if (err && err.disconnected) {
-                        logger.info(`Serial Port  ${this.portId} - ${this._cfg.rs485Port} has been disconnected and closed.  ${JSON.stringify(err)}`)
+                        logger.info(`Serial Port  ${this.portId} - ${this._cfg.rs485Port} has been disconnected and closed.  ${JSON.stringify(err)}`);
                     }
                     else {
                         logger.info(`Serial Port ${this.portId} - ${this._cfg.rs485Port} has been closed. ${err ? JSON.stringify(err) : ''}`);
@@ -1224,7 +1224,7 @@ export class RS485Port {
         }
         catch (err) {
             logger.error(`Error sending message: ${err.message}
-            for message: ${msg.toShortPacket()}`)
+            for message: ${msg.toShortPacket()}`);
             // the show, err, messages, must go on!
             if (this.isOpen) {
                 clearTimeout(this.writeTimer);
@@ -1297,7 +1297,7 @@ export class RS485Port {
     }
     public get stats() {
         let status = this.isOpen ? 'open' : this._cfg.enabled ? 'closed' : 'disabled';
-        return extend(true, { portId: this.portId, status: status, reconnects: this.reconnects }, this.counter)
+        return extend(true, { portId: this.portId, status: status, reconnects: this.reconnects }, this.counter);
     }
     public emitPortStats() {
         webApp.emitToChannel('rs485PortStats', 'rs485Stats', this.stats);

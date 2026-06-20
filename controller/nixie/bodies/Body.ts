@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Body, BodyCollection, sys } from "../../../controller/Equipment";
-import { BodyTempState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Body, BodyCollection, sys } from '../../../controller/Equipment';
+import { BodyTempState, state, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 
 export class NixieBodyCollection extends NixieEquipmentCollection<NixieBody> {
     public async setBodyAsync(body: Body, data: any) {
@@ -99,7 +99,7 @@ export class NixieBody extends NixieEquipment {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Body checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Body checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(body: Body, temp: BodyTempState) {
         try {

@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import * as path from "path";
-import extend = require("extend");
-import { logger } from "../../logger/Logger";
-import { sys as sysAlias } from "../../controller/Equipment";
-import { state as stateAlias} from "../../controller/State";
+import * as fs from 'fs';
+import * as path from 'path';
+import extend = require('extend');
+import { logger } from '../../logger/Logger';
+import { sys as sysAlias } from '../../controller/Equipment';
+import { state as stateAlias} from '../../controller/State';
 import { webApp as webAppAlias } from '../Server';
-import { config } from "../../config/Config";
+import { config } from '../../config/Config';
 export class BindingsFile {
     public static async fromBuffer(filename: string, buff: Buffer) {
         try {
@@ -35,7 +35,7 @@ export class BindingsFile {
             let interfaces = config.getSection('web.interfaces');
             let ass = [];
             for (let ifname in interfaces) {
-                let iface = interfaces[ifname]
+                let iface = interfaces[ifname];
                 if (typeof iface !== 'undefined' && typeof iface.fileName !== 'undefined')
                     if (iface.fileName.endsWith(`custom/${this.filename}`)) ass.push(ifname);
             }
@@ -90,7 +90,7 @@ export class BaseInterfaceBindings {
             toks[bind] = tok;
             try {
                 // we may error out if data can't be found (eg during init)
-                tok.reg = new RegExp("@bind=" + this.escapeRegex(bind) + ";", "g");
+                tok.reg = new RegExp('@bind=' + this.escapeRegex(bind) + ';', 'g');
                 tok.value = eval(bind);
             }
             catch (err) {
@@ -121,7 +121,7 @@ export class BaseInterfaceBindings {
             toks[bind] = tok;
             try {
                 // we may error out if data can't be found (eg during init)
-                tok.reg = new RegExp("@bind=" + this.escapeRegex(bind) + ";", "g");
+                tok.reg = new RegExp('@bind=' + this.escapeRegex(bind) + ';', 'g');
                 tok.value = eval(bind);
             }
             catch (err) {
@@ -177,7 +177,7 @@ export class InterfaceEvent implements IInterfaceEvent {
     public options: any = {};
     public body: any = {};
     public vars: any = {};
-    public processor?: string[]
+    public processor?: string[];
 }
 export class InterfaceContext {
     public name: string;

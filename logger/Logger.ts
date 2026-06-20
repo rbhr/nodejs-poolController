@@ -19,13 +19,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as winston from 'winston';
 import * as os from 'os';
-import { utils } from "../controller/Constants";
+import { utils } from '../controller/Constants';
 import { Message } from '../controller/comms/messages/Messages';
 import { config } from '../config/Config';
 import { webApp } from '../web/Server';
 import { sl } from '../controller/comms/ScreenLogic';
 
-const extend = require("extend");
+const extend = require('extend');
 
 class Logger {
     constructor() {
@@ -119,12 +119,12 @@ class Logger {
         return Promise.reject(new Error(sError));
     }
     private isIncluded(byte: number, arr: number[]): boolean {
-        if (typeof (arr) === "undefined" || !arr || arr.length === 0) return true;
+        if (typeof (arr) === 'undefined' || !arr || arr.length === 0) return true;
         if (arr.indexOf(byte) !== -1) return true;
         return false;
     }
     private isExcluded(byte: number, arr: number[]): boolean {
-        if (typeof (arr) === "undefined" || !arr) return false;
+        if (typeof (arr) === 'undefined' || !arr) return false;
         if (arr && arr.length === 0) return false;
         if (arr.indexOf(byte) !== -1) return true;
         return false;
@@ -297,73 +297,73 @@ class Logger {
             this.clearMessages();
         }
         logger.cfg = extend(true, {}, logger.cfg, {
-            "packet": {
-                "enabled": true,
-                "logToConsole": true,
-                "logToFile": true,
-                "invalid": true,
-                "broadcast": {
-                    "enabled": true,
-                    "includeActions": [],
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeActions": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+            'packet': {
+                'enabled': true,
+                'logToConsole': true,
+                'logToFile': true,
+                'invalid': true,
+                'broadcast': {
+                    'enabled': true,
+                    'includeActions': [],
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeActions': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "pump": {
-                    "enabled": true,
-                    "includeActions": [],
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeActions": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'pump': {
+                    'enabled': true,
+                    'includeActions': [],
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeActions': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "chlorinator": {
-                    "enabled": true,
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'chlorinator': {
+                    'enabled': true,
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "intellichem": {
-                    "enabled": true,
-                    "includeActions": [],
-                    "exclueActions": [],
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'intellichem': {
+                    'enabled': true,
+                    'includeActions': [],
+                    'exclueActions': [],
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "intellivalve": {
-                    "enabled": true,
-                    "includeActions": [],
-                    "exclueActions": [],
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'intellivalve': {
+                    'enabled': true,
+                    'includeActions': [],
+                    'exclueActions': [],
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "unidentified": {
-                    "enabled": true,
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'unidentified': {
+                    'enabled': true,
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 },
-                "unknown": {
-                    "enabled": true,
-                    "includeSource": [],
-                    "includeDest": [],
-                    "excludeSource": [],
-                    "excludeDest": []
+                'unknown': {
+                    'enabled': true,
+                    'includeSource': [],
+                    'includeDest': [],
+                    'excludeSource': [],
+                    'excludeDest': []
                 }
             },
-            "app": {
-                "enabled": true,
-                "level": "silly",
-                "captureForReplay": true
+            'app': {
+                'enabled': true,
+                'level': 'silly',
+                'captureForReplay': true
             }
         });
         this.consoleToFilePath = path.join(this.captureForReplayBaseDir, this.getConsoleToFilePath());
@@ -407,7 +407,7 @@ class Logger {
             };
             let backupFile = await webApp.backupServer(backupOptions);
             // Add packet capture logs to the existing backup zip
-            let jszip = require("jszip");
+            let jszip = require('jszip');
             let zip = await jszip.loadAsync(fs.readFileSync(backupFile.filePath));
 
             // Add packet capture logs to the njsPC/logs directory if present.

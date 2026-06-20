@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, Body, Circuit, ICircuit } from "../../../Equipment";
-import { state, BodyTempState } from "../../../State";
-import { logger } from "../../../../logger/Logger";
-import { ControllerType } from "../../../Constants";
+import { Inbound } from '../Messages';
+import { sys, Body, Circuit, ICircuit } from '../../../Equipment';
+import { state, BodyTempState } from '../../../State';
+import { logger } from '../../../../logger/Logger';
+import { ControllerType } from '../../../Constants';
 
 export class CircuitMessage {
     public static processTouch(msg: Inbound): void {
@@ -32,7 +32,7 @@ export class CircuitMessage {
                 CircuitMessage.processIntelliBrite(msg);
                 break;
             default:
-                logger.debug(`Unprocessed Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Message ${msg.toPacket()}`);
                 break;
         }
     }
@@ -86,7 +86,7 @@ export class CircuitMessage {
                 CircuitMessage.processDontStop(msg);
                 break;
             default:
-                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                 break;
         }
     }
@@ -157,9 +157,9 @@ export class CircuitMessage {
             // For some odd reason the circuit type for circuit 6 does not equal pool while circuit 1 does equal spa.
             // Apparently in later versions, spa does not do this either
             if (circuit.id === 1)
-                circuit.type = 13
+                circuit.type = 13;
             else if (circuit.id == 6)
-                circuit.type = 12
+                circuit.type = 12;
             else
                 circuit.type = msg.extractPayloadByte(i);
             circuit.isActive = true;
@@ -337,14 +337,14 @@ export class CircuitMessage {
                     case 6: // pool
                         body = sys.bodies.getItemById(1, sys.equipment.maxBodies > 0);
                         sbody = state.temps.bodies.getItemById(1, sys.equipment.maxBodies > 0);
-                        if (typeof body.name === 'undefined') sbody.name = body.name = "Pool";
+                        if (typeof body.name === 'undefined') sbody.name = body.name = 'Pool';
                         sbody.type = body.type = 0; // RKS: The body types were backwards here but correct everywhere else e.g. PumpMessage.
                         circuit.type === 2 ? body.isActive = true : body.isActive = false;
                         break;
                     case 1: // spa
                         body = sys.bodies.getItemById(2, sys.equipment.maxBodies > 1);
                         sbody = state.temps.bodies.getItemById(2, sys.equipment.maxBodies > 1);
-                        if(typeof body.name === 'undefined') sbody.name = body.name = "Spa";
+                        if(typeof body.name === 'undefined') sbody.name = body.name = 'Spa';
                         sbody.type = body.type = 1;
                         // process bodies - there might be a better place to do this but without other comparison packets from pools with expansion packs it is hard to determine
                         // also, if we get this far spa should always be active.  not sure if would ever not be active if we are here.

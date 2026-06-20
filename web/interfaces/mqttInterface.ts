@@ -15,18 +15,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { connect, MqttClient, Client, IClientPublishOptions, CloseCallback } from 'mqtt';
-import * as http2 from "http2";
-import * as http from "http";
-import * as https from "https";
-import extend = require("extend");
-import { logger } from "../../logger/Logger";
-import { PoolSystem, sys } from "../../controller/Equipment";
-import { State, state } from "../../controller/State";
-import { InterfaceEvent, BaseInterfaceBindings, InterfaceContext, IInterfaceEvent } from "./baseInterface";
-import { sys as sysAlias } from "../../controller/Equipment";
-import { state as stateAlias } from "../../controller/State";
+import * as http2 from 'http2';
+import * as http from 'http';
+import * as https from 'https';
+import extend = require('extend');
+import { logger } from '../../logger/Logger';
+import { PoolSystem, sys } from '../../controller/Equipment';
+import { State, state } from '../../controller/State';
+import { InterfaceEvent, BaseInterfaceBindings, InterfaceContext, IInterfaceEvent } from './baseInterface';
+import { sys as sysAlias } from '../../controller/Equipment';
+import { state as stateAlias } from '../../controller/State';
 import { webApp as webAppAlias } from '../Server';
-import { Timestamp, Utils, utils } from "../../controller/Constants";
+import { Timestamp, Utils, utils } from '../../controller/Constants';
 import { ServiceParameterError } from '../../controller/Errors';
 
 export class MqttInterfaceBindings extends BaseInterfaceBindings {
@@ -40,7 +40,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
     declare subscriptions: MqttTopicSubscription[];
     private subscribed: boolean; // subscribed to events or not
     private sentInitialMessages = false;
-    private init = () => { (async () => { await this.initAsync(); })(); }
+    private init = () => { (async () => { await this.initAsync(); })(); };
     public async initAsync() {
         try {
             if (this.client) await this.stopAsync();
@@ -58,7 +58,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                 password: baseOpts.password,
                 rejectUnauthorized: !baseOpts.selfSignedCertificate,
                 url
-            }
+            };
             this.setWillOptions(opts);
             this.client = connect(url, opts);
             this.client.on('connect', async () => {
@@ -67,7 +67,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                     await this.subscribe();
                     // make sure status is up to date immediately
                     // especially in the case of a re-connect
-                    this.bindEvent("controller", state.controllerState);
+                    this.bindEvent('controller', state.controllerState);
                 } catch (err) { logger.error(`Error connecting to MQTT Broker ${this.cfg.name} ${err.message}`); }
             });
             this.client.on('reconnect', () => {
@@ -77,7 +77,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
 
             });
             this.client.on('error', (error) => {
-                logger.error(`MQTT error ${error}`)
+                logger.error(`MQTT error ${error}`);
                 this.clearWillState();
             });
         } catch (err) { logger.error(`Error initializing MQTT client ${this.cfg.name}: ${err}`); }
@@ -87,7 +87,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
             if (typeof this.client !== 'undefined') {
                 await this.unsubscribe();
                 await new Promise<boolean>((resolve, reject) => {
-                    this.client.end(true, { reasonCode: 0, reasonString: `Shutting down MQTT Client` }, () => {
+                    this.client.end(true, { reasonCode: 0, properties: { reasonString: `Shutting down MQTT Client` } }, () => {
                         resolve(true);
                         logger.info(`Successfully shut down MQTT Client`);
                     });
@@ -195,7 +195,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
             toks[bind] = tok;
             try {
                 // we may error out if data can't be found (eg during init)
-                tok.reg = new RegExp("@bind=" + this.escapeRegex(bind) + ";", "g");
+                tok.reg = new RegExp('@bind=' + this.escapeRegex(bind) + ';', 'g');
                 tok.value = eval(bind);
                 if (typeof formatter !== 'undefined') {
                     formatter.forEach(entry => {
@@ -204,10 +204,10 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                             tok.value = eval(transform);
                         }
                         else if (typeof entry === 'object') {
-                            let rexp = new RegExp(entry.regexkey, 'g')
+                            let rexp = new RegExp(entry.regexkey, 'g');
                             tok.value = tok.value.replace(rexp, entry.replace);
                         }
-                    })
+                    });
                 }
             }
             catch (err) {
@@ -235,7 +235,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
               qos: publishOptions.qos
           };
         }
-    }
+    };
     private clearWillState() {
         if (typeof this.client.options.will === 'undefined')  return;
         let willTopic = this.client.options.will.topic;
@@ -259,7 +259,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
         this.buildTokensWithFormatter(baseOpts.rootTopic, undefined, toks, undefined, undefined, baseOpts.formatter);
         topic = this.replaceTokens(baseOpts.rootTopic, toks);
         return topic;
-    }
+    };
     public bindEvent(evt: string, ...data: any) {
         try {
             if (!this.sentInitialMessages && evt === 'controller' && data[0].status.val === 1) {
@@ -327,7 +327,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                             }
 
                             if (typeof t.processor !== 'undefined') {
-                                if (t.ignoreProcessor) message = "err";
+                                if (t.ignoreProcessor) message = 'err';
                                 else {
                                     if (typeof t._fnProcessor !== 'function') {
                                         let fnBody = Array.isArray(t.processor) ? t.processor.join('\n') : t.processor;
@@ -338,11 +338,11 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                                     }
                                     if (typeof t._fnProcessor === 'function') {
                                         let vars = this.bindVarTokens(e, evt, data);
-                                        let ctx = { util: utils, rootTopic: rootTopic, topic: topic, opts: opts, vars: vars }
+                                        let ctx = { util: utils, rootTopic: rootTopic, topic: topic, opts: opts, vars: vars };
                                         try {
                                             message = t._fnProcessor(ctx, t, sys, state, data[0]).toString();
                                             topic = ctx.topic;
-                                        } catch (err) { logger.error(`Error publishing MQTT data for topic ${t.topic}: ${err.message}`); message = "err"; }
+                                        } catch (err) { logger.error(`Error publishing MQTT data for topic ${t.topic}: ${err.message}`); message = 'err'; }
                                     }
                                 }
                             }
@@ -368,7 +368,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                                 if (typeof t.lastSent !== 'undefined') t.lastSent = undefined;
                             }
 
-                        })
+                        });
                     }
                 }
             }
@@ -379,7 +379,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
     }
     // This needed to be refactored so we could extract it from an anonymous function.  We want to be able to unbind
     // from it
-    private messageHandler = (topic, message) =>  { (async () => { await this.processMessage(topic, message); })(); }
+    private messageHandler = (topic, message) =>  { (async () => { await this.processMessage(topic, message); })(); };
     private processMessage = async (topic, message) => {
         try {
             if (!state.isInitialized){
@@ -406,7 +406,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                     case 'setstate': {
                         let id = parseInt(msg.id, 10);
                         if (typeof id !== 'undefined' && isNaN(id)) {
-                            logger.error(`Inbound MQTT ${topics} has an invalid id (${id}) in the message (${msg}).`)
+                            logger.error(`Inbound MQTT ${topics} has an invalid id (${id}) in the message (${msg}).`);
                         };
                         let isOn = typeof msg.isOn !== 'undefined' ? utils.makeBool(msg.isOn) : typeof msg.state !== 'undefined' ? utils.makeBool(msg.state) : undefined;
                         switch (topics[topics.length - 2].toLowerCase()) {
@@ -443,7 +443,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                                 break;
                             }
                             default:
-                                logger.warn(`MQTT: Inbound topic ${topics[topics.length - 1]} not matched to event ${topics[topics.length - 2].toLowerCase()}. Message ${msg} `)
+                                logger.warn(`MQTT: Inbound topic ${topics[topics.length - 1]} not matched to event ${topics[topics.length - 2].toLowerCase()}. Message ${msg} `);
                         }
                         break;
                     }
@@ -451,7 +451,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                         {
                             let id = parseInt(msg.id, 10);
                             if (typeof id !== 'undefined' && isNaN(id)) {
-                                logger.error(`Inbound MQTT ${topics} has an invalid id (${id}) in the message (${msg}).`)
+                                logger.error(`Inbound MQTT ${topics} has an invalid id (${id}) in the message (${msg}).`);
                             };
                             switch (topics[topics.length - 2].toLowerCase()) {
                                 case 'circuits':
@@ -469,7 +469,7 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                                     catch (err) { logger.error(`Error processing MQTT topic ${topics[topics.length - 2]}: ${err.message}`); }
                                     break;
                                 default:
-                                    logger.warn(`MQTT: Inbound topic ${topics[topics.length - 1]} not matched to event ${topics[topics.length - 2].toLowerCase()}. Message ${msg} `)
+                                    logger.warn(`MQTT: Inbound topic ${topics[topics.length - 1]} not matched to event ${topics[topics.length - 2].toLowerCase()}. Message ${msg} `);
                             }
                             break;
                         }
@@ -588,18 +588,18 @@ export class MqttInterfaceBindings extends BaseInterfaceBindings {
                         catch (err) { logger.error(`Error processing MQTT topic ${topics[topics.length - 2]}: ${err.message}`); }
                         break;
                     default:
-                        logger.silly(`MQTT: Inbound MQTT topic not matched: ${topic}: ${message.toString()}`)
+                        logger.silly(`MQTT: Inbound MQTT topic not matched: ${topic}: ${message.toString()}`);
                         break;
                 }
             }
         }
         catch (err) {
-            logger.error(`Error processing MQTT request ${topic}: ${err}.  ${message}`)
+            logger.error(`Error processing MQTT request ${topic}: ${err}.  ${message}`);
         }
-    }
+    };
 }
 class MqttInterfaceEvent extends InterfaceEvent {
-    public topics: MQTTPublishTopic[]
+    public topics: MQTTPublishTopic[];
 }
 export class MQTTPublishTopic {
     topic: string;
@@ -615,7 +615,7 @@ export class MQTTPublishTopic {
     options: any;
     processor?: string[];
     ignoreProcessor: boolean = false;
-    _fnProcessor: (ctx: any, pub: MQTTPublishTopic, sys: PoolSystem, state: State, data: any) => any
+    _fnProcessor: (ctx: any, pub: MQTTPublishTopic, sys: PoolSystem, state: State, data: any) => any;
 }
 class MQTTMessage {
     topic: string;
@@ -623,7 +623,7 @@ class MQTTMessage {
 }
 
 class MqttSubscriptions {
-    public subscriptions: IMQTTSubscription[]
+    public subscriptions: IMQTTSubscription[];
 }
 class MqttTopicSubscription implements IInterfaceEvent {
     root: string;
@@ -641,7 +641,7 @@ class MqttTopicSubscription implements IInterfaceEvent {
             } catch (err) { logger.error(`Error compiling subscription processor: ${err} -- ${fnBody}`); }
         }
     }
-    public get topicPath(): string { return `${this.root}/${this.topic}` };
+    public get topicPath(): string { return `${this.root}/${this.topic}`; };
     public executeProcessor(bindings: MqttInterfaceBindings, value: any) {
         let baseOpts = extend(true, { headers: {} }, bindings.cfg.options, bindings.context.options);
         let opts = extend(true, baseOpts, this.options);

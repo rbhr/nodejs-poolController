@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Filter, FilterCollection, sys } from "../../../controller/Equipment";
-import { FilterState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Filter, FilterCollection, sys } from '../../../controller/Equipment';
+import { FilterState, state, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 
 export class NixieFilterCollection extends NixieEquipmentCollection<NixieFilter> {
     public async setFilterStateAsync(fstate: FilterState, val: boolean) {
@@ -113,7 +113,7 @@ export class NixieFilter extends NixieEquipment {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Filter checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Filter checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(Filter: Filter, temp: FilterState) {
         try {
@@ -125,7 +125,7 @@ export class NixieFilter extends NixieEquipment {
             if (typeof this._pollTimer !== 'undefined' || this._pollTimer) clearTimeout(this._pollTimer);
             this._pollTimer = null;
             let fstate = state.filters.getItemById(this.filter.id);
-            logger.info(`Closing filter ${fstate.name}`)
+            logger.info(`Closing filter ${fstate.name}`);
             await this.setFilterStateAsync(fstate, false);
             fstate.emitEquipmentChange();
         }

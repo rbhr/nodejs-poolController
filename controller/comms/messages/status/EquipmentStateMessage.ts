@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { IntelliCenterBoard } from 'controller/boards/IntelliCenterBoard';
 import { EasyTouchBoard } from 'controller/boards/EasyTouchBoard';
 import { IntelliTouchBoard } from 'controller/boards/IntelliTouchBoard';
-import { SunTouchBoard } from "controller/boards/SunTouchBoard";
+import { SunTouchBoard } from 'controller/boards/SunTouchBoard';
 
 import { logger } from '../../../../logger/Logger';
 import { ControllerType } from '../../../Constants';
@@ -208,7 +208,7 @@ export class EquipmentStateMessage {
                     let fnTempFromByte = function (byte) {
                         return byte;
                         //return (byte & 0x007F) * (((byte & 0x0080) > 0) ? -1 : 1); // RKS: 09-26-20 Not sure how negative temps are represented but this aint it.  Temps > 127 have been witnessed.
-                    }
+                    };
 
                     // Shared
                     let dt = new Date();
@@ -259,11 +259,11 @@ export class EquipmentStateMessage {
                                     logger.info(`njsPC automatically updated OCP time.  You're welcome.`);
                                 })
                                 .catch((err) => {
-                                    logger.error(`Error automatically setting system time. ${JSON.stringify(err)}`)
+                                    logger.error(`Error automatically setting system time. ${JSON.stringify(err)}`);
                                 })
                                 .finally(() => {
                                     state.time.isUpdating = false;
-                                })
+                                });
                         }
                     }
                     state.delay = msg.extractPayloadByte(12) & 63; // not sure what 64 val represents

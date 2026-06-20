@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, CircuitGroup, LightGroup, CircuitGroupCircuit, LightGroupCircuit, ICircuitGroup, CircuitGroupCircuitCollection, ControllerType } from "../../../Equipment";
+import { Inbound } from '../Messages';
+import { sys, CircuitGroup, LightGroup, CircuitGroupCircuit, LightGroupCircuit, ICircuitGroup, CircuitGroupCircuitCollection, ControllerType } from '../../../Equipment';
 import { state, CircuitGroupState, LightGroupState, ICircuitGroupState } from '../../../State';
-import { logger } from "../../../../logger/Logger";
+import { logger } from '../../../../logger/Logger';
 export class CircuitGroupMessage {
     private static maxCircuits: number = 16;
     public static process(msg: Inbound): void {
@@ -62,7 +62,7 @@ export class CircuitGroupMessage {
                 CircuitGroupMessage.processColor(msg);
                 break;
             default:
-                if(msgId <= 31) logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                if(msgId <= 31) logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                 break;
                 
         }

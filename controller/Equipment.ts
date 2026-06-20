@@ -15,28 +15,28 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as path from "path";
-import * as fs from "fs";
-import * as extend from "extend";
-import * as util from "util";
-import { setTimeout } from "timers";
-import { logger } from "../logger/Logger";
-import { state, CommsState, ChemicalChlorState } from "./State";
-import { Timestamp, ControllerType, utils } from "./Constants";
+import * as path from 'path';
+import * as fs from 'fs';
+import * as extend from 'extend';
+import * as util from 'util';
+import { setTimeout } from 'timers';
+import { logger } from '../logger/Logger';
+import { state, CommsState, ChemicalChlorState } from './State';
+import { Timestamp, ControllerType, utils } from './Constants';
 export { ControllerType };
-import { webApp } from "../web/Server";
-import { SystemBoard, EquipmentIdRange } from "./boards/SystemBoard";
-import { BoardFactory } from "./boards/BoardFactory";
-import { EquipmentStateMessage } from "./comms/messages/status/EquipmentStateMessage";
+import { webApp } from '../web/Server';
+import { SystemBoard, EquipmentIdRange } from './boards/SystemBoard';
+import { BoardFactory } from './boards/BoardFactory';
+import { EquipmentStateMessage } from './comms/messages/status/EquipmentStateMessage';
 import { conn } from './comms/Comms';
-import { versionCheck } from "../config/VersionCheck";
-import { getStateForZip } from "./zipCoords";
-import { NixieControlPanel } from "./nixie/Nixie";
+import { versionCheck } from '../config/VersionCheck';
+import { getStateForZip } from './zipCoords';
+import { NixieControlPanel } from './nixie/Nixie';
 import { NixieBoard } from 'controller/boards/NixieBoard';
-import { MockSystemBoard } from "../anslq25/boards/MockSystemBoard";
-import { MockBoardFactory } from "../anslq25/boards/MockBoardFactory";
-import { ScreenLogicComms } from "./comms/ScreenLogic";
-import { VirtualEquipmentManager, virtualEquipmentManager } from "./virtualEquipment/VirtualEquipmentManager";
+import { MockSystemBoard } from '../anslq25/boards/MockSystemBoard';
+import { MockBoardFactory } from '../anslq25/boards/MockBoardFactory';
+import { ScreenLogicComms } from './comms/ScreenLogic';
+import { VirtualEquipmentManager, virtualEquipmentManager } from './virtualEquipment/VirtualEquipmentManager';
 
 interface IPoolSystem {
     cfgPath: string;
@@ -134,7 +134,7 @@ export class PoolSystem implements IPoolSystem {
                 { val: 41, name: 'stshared', part: '520820', desc: 'Pool and Spa controller', bodies: 2, valves: 4, circuits: 5, single: false, shared: true, dual: false, features: 4, chlorinators: 1, chemControllers: 1 },
                 { val: 40, name: 'stsingle', part: '520819', desc: 'Pool or Spa controller', bodies: 2, valves: 4, circuits: 5, single: true, shared: true, dual: false, features: 4, chlorinators: 1, chemControllers: 1 }
             ]
-        })
+        });
         if (include.indexOf('nixie') >= 0) arr.push({
             type: 'nixie', name: 'Nixie', canChange: true,
             models: [
@@ -607,7 +607,7 @@ class EqItemCollection<T> implements IEqItemCollection {
             this.data = data;
         }
         else {
-            if (typeof data[name] === "undefined") data[name] = [];
+            if (typeof data[name] === 'undefined') data[name] = [];
             this.data = data[name];
             this.name = name;
         }
@@ -629,7 +629,7 @@ class EqItemCollection<T> implements IEqItemCollection {
         return this.createItem(extend({}, { id: ndx + 1 }, data));
     }
     public getItemById(id: number | string, add?: boolean, data?: any): T {
-        let itm = this.find(elem => { return typeof (elem as { id?}).id !== 'undefined' && (elem as { id?}).id === id });
+        let itm = this.find(elem => { return typeof (elem as { id?}).id !== 'undefined' && (elem as { id?}).id === id; });
         if (typeof itm !== 'undefined') return itm;
         if (typeof add !== 'undefined' && add) return this.add(extend(true, { id: id }, data));
         return this.createItem(data || { id: id });
@@ -755,7 +755,7 @@ export class Anslq25 extends EqItem {
     public set portId(val: number) { this.setDataVal('portId', val); }
     public get broadcastComms(): boolean { return this.data.broadcastComms; }
     public set broadcastComms(val: boolean) { this.setDataVal('broadcastComms', val); }
-    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, "modules"); }
+    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, 'modules'); }
 }
 export class General extends EqItem {
     ctor(data: any, name?: any): General { return new General(data, name || 'pool'); }
@@ -772,7 +772,7 @@ export class General extends EqItem {
 }
 // Custom Names are IntelliTouch Only
 export class CustomNameCollection extends EqItemCollection<CustomName> {
-    constructor(data: any, name?: string) { super(data, name || "customNames"); }
+    constructor(data: any, name?: string) { super(data, name || 'customNames'); }
     public createItem(data: any): CustomName { return new CustomName(data); }
 }
 export class CustomName extends EqItem {
@@ -804,7 +804,7 @@ export class Owner extends EqItem {
 // having to modify external temperature feeds.  Think of binding as the id of the sensor which must be unique for
 // all defined sensors.  The get/set calibration methods resolve the sensors and maintain the data from a single point.
 export class TempSensorCollection extends EqItemCollection<TempSensor> {
-    constructor(data: any, name?: string) { super(data, name || "tempSensors"); }
+    constructor(data: any, name?: string) { super(data, name || 'tempSensors'); }
     public createItem(data: any): TempSensor { return new TempSensor(data); }
     public setCalibration(id: string, cal: number): TempSensor {
         let sensor = this.getItemById(id);
@@ -817,7 +817,7 @@ export class TempSensorCollection extends EqItemCollection<TempSensor> {
     }
 }
 export class FlowSensorCollection extends EqItemCollection<TempSensor> {
-    constructor(data: any, name?: string) { super(data, name || "flowSensors"); }
+    constructor(data: any, name?: string) { super(data, name || 'flowSensors'); }
     public createItem(data: any): TempSensor { return new TempSensor(data); }
 }
 export class TempSensor extends EqItem {
@@ -965,7 +965,7 @@ export class Location extends EqItem {
     public set timeZone(val: number | any) { this.setDataVal('timeZone', sys.board.valueMaps.timeZones.encode(val)); }
 }
 export class ExpansionModuleCollection extends EqItemCollection<ExpansionModule> {
-    constructor(data: any, name?: string) { super(data, name || "modules"); }
+    constructor(data: any, name?: string) { super(data, name || 'modules'); }
     public createItem(data: any): ExpansionModule { return new ExpansionModule(data); }
 }
 export class ExpansionModule extends EqItem {
@@ -984,7 +984,7 @@ export class ExpansionModule extends EqItem {
     public set isActive(val: boolean) { this.setDataVal('isActive', val); }
 }
 export class ExpansionPanelCollection extends EqItemCollection<ExpansionPanel> {
-    constructor(data: any, name?: string) { super(data, name || "expansions"); }
+    constructor(data: any, name?: string) { super(data, name || 'expansions'); }
     public createItem(data: any): ExpansionPanel { return new ExpansionPanel(data); }
 }
 export class ExpansionPanel extends EqItem {
@@ -995,7 +995,7 @@ export class ExpansionPanel extends EqItem {
     public set type(val: number) { this.setDataVal('type', val); }
     public get isActive(): boolean { return this.data.isActive; }
     public set isActive(val: boolean) { this.setDataVal('isActive', val); }
-    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, "modules"); }
+    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, 'modules'); }
 }
 export class Equipment extends EqItem {
     public dataName = 'equipmentConfig';
@@ -1050,8 +1050,8 @@ export class Equipment extends EqItem {
     public set maxChemControllers(val: number) { this.setDataVal('maxChemControllers', val); }
     public get maxChemDosers(): number { return this.data.maxChemDosers; }
     public set maxChemDosers(val: number) { this.setDataVal('maxChemDosers', val); }
-    public get expansions(): ExpansionPanelCollection { return new ExpansionPanelCollection(this.data, "expansions"); }
-    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, "modules"); }
+    public get expansions(): ExpansionPanelCollection { return new ExpansionPanelCollection(this.data, 'expansions'); }
+    public get modules(): ExpansionModuleCollection { return new ExpansionModuleCollection(this.data, 'modules'); }
     public get maxCustomNames(): number { return this.data.maxCustomNames || 10; }
     public set maxCustomNames(val: number) { this.setDataVal('maxCustomNames', val); }
     public get tempSensors(): TempSensorCollection { return new TempSensorCollection(this.data); }
@@ -1163,7 +1163,7 @@ export class ConfigVersion extends EqItem {
 }
 
 export class BodyCollection extends EqItemCollection<Body> {
-    constructor(data: any, name?: string) { super(data, name || "bodies"); }
+    constructor(data: any, name?: string) { super(data, name || 'bodies'); }
     public createItem(data: any): Body { return new Body(data); }
     // RKS: This finds a body by any of it's identifying factors.
     public findByObject(obj: any): Body {
@@ -1224,10 +1224,10 @@ export class Body extends EqItem {
     }
 }
 export class ScheduleCollection extends EqItemCollection<Schedule> {
-    constructor(data: any, name?: string) { super(data, name || "schedules"); }
+    constructor(data: any, name?: string) { super(data, name || 'schedules'); }
     public createItem(data: any): Schedule { return new Schedule(data); }
     public getNextEquipmentId(range: EquipmentIdRange): number {
-        let data = [...this.data, ...sys.eggTimers.get()]
+        let data = [...this.data, ...sys.eggTimers.get()];
         for (let i = range.start; i <= range.end; i++) {
             let eq = data.find(elem => elem.id === i);
             if (typeof eq === 'undefined') return i;
@@ -1304,14 +1304,14 @@ export class Schedule extends EqItem {
 }
 // TODO: Get rid of this
 export class EggTimerCollection extends EqItemCollection<EggTimer> {
-    constructor(data: any, name?: string) { super(data, name || "eggTimers"); }
+    constructor(data: any, name?: string) { super(data, name || 'eggTimers'); }
     public createItem(data: any): EggTimer { return new EggTimer(data); }
 }
 // TODO: Get rid of this
 export class EggTimer extends EqItem {
     constructor(data: any) {
         super(data);
-        if (typeof data.startDate === "undefined") this._startDate = new Date();
+        if (typeof data.startDate === 'undefined') this._startDate = new Date();
         else this._startDate = new Date(data.startDate);
         if (isNaN(this._startDate.getTime())) this._startDate = new Date();
     }
@@ -1327,7 +1327,7 @@ export class EggTimer extends EqItem {
     public set isActive(val: boolean) { this.setDataVal('isActive', val); }
 }
 export class CircuitCollection extends EqItemCollection<Circuit> {
-    constructor(data: any, name?: string) { super(data, name || "circuits"); }
+    constructor(data: any, name?: string) { super(data, name || 'circuits'); }
     public filter(f: (value: Circuit, index?: any, array?: any[]) => boolean): CircuitCollection {
         return new CircuitCollection({ circuits: this.data.filter(f) });
     }
@@ -1335,7 +1335,7 @@ export class CircuitCollection extends EqItemCollection<Circuit> {
     public add(obj: any): Circuit {
         this.data.push(obj);
         let circuit = this.createItem(obj);
-        if (typeof circuit.name === "undefined")
+        if (typeof circuit.name === 'undefined')
             circuit.name = Circuit.getIdName(circuit.id);
         return circuit;
     }
@@ -1439,7 +1439,7 @@ export class Circuit extends EqItem implements ICircuit {
     }
 }
 export class FeatureCollection extends EqItemCollection<Feature> {
-    constructor(data: any, name?: string) { super(data, name || "features"); }
+    constructor(data: any, name?: string) { super(data, name || 'features'); }
     public filter(f: (value: Circuit, index?: any, array?: any[]) => boolean): FeatureCollection {
         return new FeatureCollection({ features: this.data.filter(f) });
     }
@@ -1499,7 +1499,7 @@ export interface ICircuit {
     master: number;
 }
 export class PumpCollection extends EqItemCollection<Pump> {
-    constructor(data: any, name?: string) { super(data, name || "pumps"); }
+    constructor(data: any, name?: string) { super(data, name || 'pumps'); }
     public createItem(data: any): Pump { return new Pump(data); }
     public getDualSpeed(add?: boolean): Pump {
         let ds = sys.board.valueMaps.pumpTypes.getValue('ds');
@@ -1527,10 +1527,10 @@ export class Pump extends EqItem {
         if (typeof this.data.body === 'number' && this.data.model === 2 && this.data.master === 1){
             // convert SS from body types to circuit arrays
             if (this.data.body === 255 || this.data.body === 0 && !this.data.circuits.find(el => el.circuit === 6)) {
-                this.data.circuits.push({"circuit": 6, "relay": 1, "units": 0, "id": this.data.circuits.length + 1, "master": 1})
+                this.data.circuits.push({'circuit': 6, 'relay': 1, 'units': 0, 'id': this.data.circuits.length + 1, 'master': 1});
             }
             if (this.data.body === 255 || this.data.body === 101 && !this.data.circuits.find(el => el.circuit === 1)) {
-                this.data.circuits.push({"circuit": 1, "relay": 1, "units": 0, "id": this.data.circuits.length + 1, "master": 1})
+                this.data.circuits.push({'circuit': 1, 'relay': 1, 'units': 0, 'id': this.data.circuits.length + 1, 'master': 1});
             }
             this.data.body = undefined;
         }
@@ -1603,8 +1603,8 @@ export class Pump extends EqItem {
     public set body(val: number | any) { this.setDataVal('body', sys.board.valueMaps.pumpBodies.encode(val)); }
     public get model(): number { return this.data.model; }
     public set model(val: number) { this.setDataVal('model', val); }
-    public get circuits(): PumpCircuitCollection { return new PumpCircuitCollection(this.data, "circuits"); }
-    public get relays(): PumpRelayCollection { return new PumpRelayCollection(this.data, "relays"); }
+    public get circuits(): PumpCircuitCollection { return new PumpCircuitCollection(this.data, 'circuits'); }
+    public get relays(): PumpRelayCollection { return new PumpRelayCollection(this.data, 'relays'); }
     public deletePumpCircuit(pumpCircuitId: number) {
         return sys.board.pumps.deletePumpCircuit(this, pumpCircuitId);
     }
@@ -1637,7 +1637,7 @@ export class Pump extends EqItem {
     }
 }
 export class PumpCircuitCollection extends EqItemCollection<PumpCircuit> {
-    constructor(data: any, name?: string) { super(data, name || "circuits"); }
+    constructor(data: any, name?: string) { super(data, name || 'circuits'); }
     public createItem(data: any): PumpCircuit { return new PumpCircuit(data); }
 }
 export class PumpCircuit extends EqItem {
@@ -1658,7 +1658,7 @@ export class PumpCircuit extends EqItem {
     public set maxPressure(val: number) { this.setDataVal('maxPressure', val); }
 }
 export class PumpRelayCollection extends EqItemCollection<PumpRelay> {
-    constructor(data: any, name?: string) { super(data, name || "relays"); }
+    constructor(data: any, name?: string) { super(data, name || 'relays'); }
     public createItem(data: any): PumpRelay { return new PumpRelay(data); }
 }
 export class PumpRelay extends EqItem {
@@ -1672,7 +1672,7 @@ export class PumpRelay extends EqItem {
 }
 
 export class ChlorinatorCollection extends EqItemCollection<Chlorinator> {
-    constructor(data: any, name?: string) { super(data, name || "chlorinators"); }
+    constructor(data: any, name?: string) { super(data, name || 'chlorinators'); }
     public createItem(data: any): Chlorinator { return new Chlorinator(data); }
     public filter(f: (value: Chlorinator, index?: any, array?: any[]) => boolean): ChlorinatorCollection {
         return new ChlorinatorCollection({ chlorinators: this.data.filter(f) });
@@ -1683,12 +1683,12 @@ export class ChlorinatorCollection extends EqItemCollection<Chlorinator> {
             elem.body === 32 && body <= 2);
     }
     public getItemByPortId(portId: number, add?: boolean, data?: any): Chlorinator {
-        let itm = this.find(elem => { return typeof (elem as { portId?}).portId !== 'undefined' && (elem as { portId?}).portId === portId });
+        let itm = this.find(elem => { return typeof (elem as { portId?}).portId !== 'undefined' && (elem as { portId?}).portId === portId; });
         if (typeof itm !== 'undefined') return itm;
         if (typeof add !== 'undefined' && add) return this.add(extend(true, { portId: portId }, data));
         return this.createItem(extend(true, data, { portId: portId }));
     }
-    public findItemByPortId(portId: number) { return this.find(elem => { return typeof (elem as { portId?}).portId !== 'undefined' && (elem as { portId?}).portId === portId }); }
+    public findItemByPortId(portId: number) { return this.find(elem => { return typeof (elem as { portId?}).portId !== 'undefined' && (elem as { portId?}).portId === portId; }); }
 }
 export class Chlorinator extends EqItem {
     public dataName = 'chlorinatorConfig';
@@ -1745,7 +1745,7 @@ export class Chlorinator extends EqItem {
     }
 }
 export class ValveCollection extends EqItemCollection<Valve> {
-    constructor(data: any, name?: string) { super(data, name || "valves"); }
+    constructor(data: any, name?: string) { super(data, name || 'valves'); }
     public createItem(data: any): Valve { return new Valve(data); }
     public getIntake(): Valve[] {
         let valves = this.data.filter(x => x.isIntake === true);
@@ -1793,7 +1793,7 @@ export class Valve extends EqItem {
     public set deviceBinding(val: string) { this.setDataVal('deviceBinding', val); }
 }
 export class HeaterCollection extends EqItemCollection<Heater> {
-    constructor(data: any, name?: string) { super(data, name || "heaters"); }
+    constructor(data: any, name?: string) { super(data, name || 'heaters'); }
     public createItem(data: any): Heater { return new Heater(data); }
     public getItemByAddress(address: number, add?: boolean, data?: any): Heater {
         let itm = this.find(elem => elem.address === address && typeof elem.address !== 'undefined');
@@ -1870,7 +1870,7 @@ export class Heater extends EqItem {
     public set deviceBinding(val: string) { this.setDataVal('deviceBinding', val); }
 }
 export class CoverCollection extends EqItemCollection<Cover> {
-    constructor(data: any, name?: string) { super(data, name || "covers"); }
+    constructor(data: any, name?: string) { super(data, name || 'covers'); }
     public createItem(data: any): Cover {
         if (typeof data.circuits === 'undefined') data.circuits = [];
         return new Cover(data);
@@ -1920,7 +1920,7 @@ export interface ICircuitGroupCircuit {
     circuit: number
 }
 export class LightGroupCollection extends EqItemCollection<LightGroup> {
-    constructor(data: any, name?: string) { super(data, name || "lightGroups"); }
+    constructor(data: any, name?: string) { super(data, name || 'lightGroups'); }
     public createItem(data: any): LightGroup { return new LightGroup(data); }
 }
 export class LightGroupCircuitCollection extends EqItemCollection<LightGroupCircuit> {
@@ -2003,7 +2003,7 @@ export class LightGroup extends EqItem implements ICircuitGroup, ICircuit {
     public set showInFeatures(val: boolean) { this.setDataVal('showInFeatures', val); }
     public get lightingTheme(): number | any { return this.data.lightingTheme; }
     public set lightingTheme(val: number | any) { this.setDataVal('lightingTheme', sys.board.valueMaps.lightThemes.encode(val)); }
-    public get circuits(): LightGroupCircuitCollection { return new LightGroupCircuitCollection(this.data, "circuits"); }
+    public get circuits(): LightGroupCircuitCollection { return new LightGroupCircuitCollection(this.data, 'circuits'); }
     public getLightThemes() {
         // Go through the circuits and gather the themes.
         // This method first looks at the circuits to determine their type (function)
@@ -2098,7 +2098,7 @@ export class CircuitGroupCircuit extends EqItem implements ICircuitGroupCircuit 
     }
 }
 export class CircuitGroupCollection extends EqItemCollection<CircuitGroup> {
-    constructor(data: any, name?: string) { super(data, name || "circuitGroups"); }
+    constructor(data: any, name?: string) { super(data, name || 'circuitGroups'); }
     public createItem(data: any): CircuitGroup { return new CircuitGroup(data); }
     public getInterfaceById(id: number): ICircuitGroup {
         let iGroup: ICircuitGroup = this.getItemById(id, false, { id: id, isActive: false });
@@ -2141,7 +2141,7 @@ export class CircuitGroup extends EqItem implements ICircuitGroup, ICircuit {
     public get showInFeatures(): boolean { return utils.makeBool(this.data.showInFeatures); }
     public set showInFeatures(val: boolean) { this.setDataVal('showInFeatures', val); }
 
-    public get circuits(): CircuitGroupCircuitCollection { return new CircuitGroupCircuitCollection(this.data, "circuits"); }
+    public get circuits(): CircuitGroupCircuitCollection { return new CircuitGroupCircuitCollection(this.data, 'circuits'); }
     public getExtended() {
         let group = this.get(true);
         group.type = sys.board.valueMaps.circuitGroupTypes.transform(group.type);
@@ -2158,7 +2158,7 @@ export class CircuitGroup extends EqItem implements ICircuitGroup, ICircuit {
     }
 }
 export class RemoteCollection extends EqItemCollection<Remote> {
-    constructor(data: any, name?: string) { super(data, name || "remotes"); }
+    constructor(data: any, name?: string) { super(data, name || 'remotes'); }
     public createItem(data: any): Remote { return new Remote(data); }
 }
 export class Remote extends EqItem {
@@ -2203,7 +2203,7 @@ export class Remote extends EqItem {
     public get stepSize(): number { return this.data.stepSize; }
 }
 export class SecurityRoleCollection extends EqItemCollection<SecurityRole> {
-    constructor(data: any, name?: string) { super(data, name || "roles"); }
+    constructor(data: any, name?: string) { super(data, name || 'roles'); }
     public createItem(data: any): SecurityRole { return new SecurityRole(data); }
 }
 export class SecurityRole extends EqItem {
@@ -2238,7 +2238,7 @@ export class Security extends EqItem {
     public set guestEnabled(val: boolean) { this.setDataVal('guestEnabled', val); }
     public get enabledByte(): number { return this.data.enabledByte; }
     public set enabledByte(val: number) { this.setDataVal('enabledByte', val); }
-    public get roles(): SecurityRoleCollection { return new SecurityRoleCollection(this.data, "roles"); }
+    public get roles(): SecurityRoleCollection { return new SecurityRoleCollection(this.data, 'roles'); }
 }
 export class Alerts extends EqItem {
     public dataName = 'alertsConfig';
@@ -2301,7 +2301,7 @@ export class Alerts extends EqItem {
     }
 }
 export class ChemControllerCollection extends EqItemCollection<ChemController> {
-    constructor(data: any, name?: string) { super(data, name || "chemControllers"); }
+    constructor(data: any, name?: string) { super(data, name || 'chemControllers'); }
     public createItem(data: any): ChemController { return new ChemController(data); }
     public getItemByAddress(address: number, add?: boolean, data?: any): ChemController {
         let itm = this.find(elem => elem.address === address && typeof elem.address !== 'undefined');
@@ -2326,7 +2326,7 @@ export class ChemControllerCollection extends EqItemCollection<ChemController> {
     }
 }
 export class ChemDoserCollection extends EqItemCollection<ChemDoser> {
-    constructor(data: any, name?: string) { super(data, name || "chemDosers"); }
+    constructor(data: any, name?: string) { super(data, name || 'chemDosers'); }
     public createItem(data: any): ChemDoser { return new ChemDoser(data); }
 }
 
@@ -2624,7 +2624,7 @@ export class ChemicalORP extends Chemical {
     }
 }
 export class FilterCollection extends EqItemCollection<Filter> {
-    constructor(data: any, name?: string) { super(data, name || "filters"); }
+    constructor(data: any, name?: string) { super(data, name || 'filters'); }
     public createItem(data: any): Filter { return new Filter(data); }
 }
 export class Filter extends EqItem {

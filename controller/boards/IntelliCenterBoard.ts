@@ -27,7 +27,7 @@ import { state, ChlorinatorState, LightGroupState, VirtualCircuitState, ICircuit
 import { utils, ControllerType } from '../../controller/Constants';
 import { InvalidEquipmentIdError, InvalidEquipmentDataError, EquipmentNotFoundError, MessageError, InvalidOperationError } from '../Errors';
 import { ncp } from '../nixie/Nixie';
-import { Timestamp } from "../Constants"
+import { Timestamp } from '../Constants';
 const INTELLICENTER_MAX_NAME_LENGTH = 15;
 const normalizeIntelliCenterName = (name: any, fallback: string = ''): string => {
     const source = typeof name !== 'undefined' ? name : fallback || '';
@@ -132,7 +132,7 @@ export class IntelliCenterBoard extends SystemBoard {
             let arr = [];
             for (let i = 0; i < arrKeys.length; i++) arr.push(extend(true, { val: arrKeys[i] }, this.get(arrKeys[i])));
             return arr;
-        }
+        };
         this.valueMaps.scheduleDays.transform = function (byte) {
             let days = [];
             let b = byte & 0x007F;
@@ -516,8 +516,8 @@ export class IntelliCenterBoard extends SystemBoard {
         // [17-18]:  Firmware version (major, minor)
         // [19-21]:  Device trailer bytes (live 3.008 captures show 1,0,10 for ICP/WL 251)
         const profile = this.getRegistrationProfile();
-        const fwMajor = parseInt(sys.equipment.controllerFirmware || "3") || 3;
-        const fwMinor = Math.round((parseFloat(sys.equipment.controllerFirmware || "3.0") % 1) * 1000);
+        const fwMajor = parseInt(sys.equipment.controllerFirmware || '3') || 3;
+        const fwMinor = Math.round((parseFloat(sys.equipment.controllerFirmware || '3.0') % 1) * 1000);
         const out: Outbound = Outbound.create({
             source: profile.address,
             dest: 16,  // MUST send to OCP (16), not broadcast (15)
@@ -558,7 +558,7 @@ export class IntelliCenterBoard extends SystemBoard {
         (sys.board as IntelliCenterBoard).needsConfigChanges = true;
         try {
             // v3.x: Wireless/ICP traffic is unicast to OCP (16) and includes 228→164 (version table) with ACK(164).
-            if (parseFloat(sys.equipment.controllerFirmware || "0") >= 3.0) {
+            if (parseFloat(sys.equipment.controllerFirmware || '0') >= 3.0) {
                 // ISSUE-003: don't block startup config polling on registration completion.
                 // Start registration attempts in the background and send Action 228 immediately.
                 this.startRegistrationBootstrapAsync();
@@ -1374,7 +1374,7 @@ class IntelliCenterConfigQueue extends ConfigQueue {
                 })
                 .finally(() => {
                     setTimeout(() => { self.processNext(out, runEpoch); }, 10);
-                })
+                });
         } else {
             // Now that we are done check the configuration a final time.  If we have anything outstanding
             // it will get picked up.
@@ -1434,7 +1434,7 @@ class IntelliCenterConfigQueue extends ConfigQueue {
         if (this._processing) {
             if (curr.hasChanges(ver)) this._newRequest = true;
             if (sys.configVersion.lastUpdated.getTime() > new Date().getTime() - 90000)
-                console.log('WE ARE ALREADY PROCESSING CHANGES...')
+                console.log('WE ARE ALREADY PROCESSING CHANGES...');
             return;
         }
         // IMPORTANT: Only enter "processing" mode if there are actual version changes.
@@ -1680,7 +1680,7 @@ class IntelliCenterSystemCommands extends SystemCommands {
                 solarTempAdj2: obj.solarTempAdj2,
                 solarTempAdj3: obj.solarTempAdj3,
                 solarTempAdj4: obj.solarTempAdj4,
-            }
+            };
             await this.setOptionsAsync(sensors); // Map this to the options message as these are one in the same.
             return sys.equipment.tempSensors;
         }
@@ -1701,7 +1701,7 @@ class IntelliCenterSystemCommands extends SystemCommands {
         return state.data.delay;
     }
     public async setOptionsAsync(obj?: any): Promise<Options> {
-        let fnToByte = function (num) { return num < 0 ? Math.abs(num) | 0x80 : Math.abs(num) || 0; }
+        let fnToByte = function (num) { return num < 0 ? Math.abs(num) | 0x80 : Math.abs(num) || 0; };
         const isIntellicenterV3 = (sys.controllerType === ControllerType.IntelliCenter && sys.equipment.isIntellicenterV3);
         const encodeFreezeOverride = (minutes: number): number => {
             if (isNaN(minutes)) return 0;
@@ -4139,7 +4139,7 @@ class IntelliCenterPumpCommands extends PumpCommands {
                             if (type.name === 'ds') circ.units = undefined;
                             else {
                                 // Need to validate this earlier.
-                                let units = c.units !== 'undefined' ? parseInt(c.units, 10) : 0
+                                let units = c.units !== 'undefined' ? parseInt(c.units, 10) : 0;
                                 circ.units = units;
                             }
                         }
@@ -4271,7 +4271,7 @@ class IntelliCenterBodyCommands extends BodyCommands {
         body2: { heatMode: number, heatSetpoint: number, coolSetpoint: number },
         _processingStartTime?: number
     };
-    private async queueBodyHeatSettings(bodyId?: number, byte?: number, data?: any): Promise<Boolean> {
+    private async queueBodyHeatSettings(bodyId?: number, byte?: number, data?: any): Promise<boolean> {
         logger.debug(`queueBodyHeatSettings: ${JSON.stringify(this.bodyHeatSettings)}`);  // remove this line if #848 is fixed
         if (typeof this.bodyHeatSettings === 'undefined') {
             let body1 = sys.bodies.getItemById(1);
@@ -5364,7 +5364,7 @@ export class IntelliCenterChemControllerCommands extends ChemControllerCommands 
         let orpEnabled = typeof data.orp !== 'undefined' && typeof data.orp.enabled !== 'undefined' ? utils.makeBool(data.orp.enabled) : chem.orp.enabled;
         let siCalcType = typeof data.siCalcType !== 'undefined' ? sys.board.valueMaps.siCalcTypes.encode(data.siCalcType, 0) : chem.siCalcType;
 
-        let saltLevel = (state.chlorinators.length > 0) ? state.chlorinators.getItemById(1).saltLevel || 1000 : 1000
+        let saltLevel = (state.chlorinators.length > 0) ? state.chlorinators.getItemById(1).saltLevel || 1000 : 1000;
         chem.ph.tank.capacity = 6;
         chem.orp.tank.capacity = 6;
         let acidTankLevel = typeof data.ph !== 'undefined' && typeof data.ph.tank !== 'undefined' && typeof data.ph.tank.level !== 'undefined' ? parseInt(data.ph.tank.level, 10) : schem.ph.tank.level;

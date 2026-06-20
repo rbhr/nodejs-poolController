@@ -15,12 +15,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as path from "path";
-import * as fs from "fs";
+import * as path from 'path';
+import * as fs from 'fs';
 import { EventEmitter } from 'events';
-const extend = require("extend");
-import { logger } from "../logger/Logger";
-import { utils } from "../controller/Constants";
+const extend = require('extend');
+import { logger } from '../logger/Logger';
+import { utils } from '../controller/Constants';
 import { setTimeout } from 'timers/promises';
 class Config {
     private cfgPath: string;
@@ -31,7 +31,7 @@ class Config {
     public emitter: EventEmitter;
     constructor() {
         let self=this;
-        this.cfgPath = path.posix.join(process.cwd(), "/config.json");
+        this.cfgPath = path.posix.join(process.cwd(), '/config.json');
         this.emitter = new EventEmitter();
         // RKS 05-18-20: This originally had multiple points of failure where it was not in the try/catch.
         try {
@@ -40,7 +40,7 @@ class Config {
             let userCfg: any = {};
             if (fs.existsSync(this.cfgPath)) {
                 try {
-                    const raw = fs.readFileSync(this.cfgPath, "utf8");
+                    const raw = fs.readFileSync(this.cfgPath, 'utf8');
                     const trimmed = raw.trim();
                     if (trimmed.length > 0) userCfg = JSON.parse(trimmed);
                     else {
@@ -58,8 +58,8 @@ class Config {
                     userCfg = {};
                 }
             }
-            const def = JSON.parse(fs.readFileSync(path.join(process.cwd(), "/defaultConfig.json"), "utf8").trim());
-            const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "/package.json"), "utf8").trim());
+            const def = JSON.parse(fs.readFileSync(path.join(process.cwd(), '/defaultConfig.json'), 'utf8').trim());
+            const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), '/package.json'), 'utf8').trim());
             this._cfg = extend(true, {}, def, userCfg, { appVersion: packageJson.version });
             this._isInitialized = true;
             this.updateAsync((err) => {
@@ -73,7 +73,7 @@ class Config {
                             let changedCfg: any = {};
                             if (fs.existsSync(self.cfgPath)) {
                                 try {
-                                    const raw2 = fs.readFileSync(self.cfgPath, "utf8");
+                                    const raw2 = fs.readFileSync(self.cfgPath, 'utf8');
                                     const trimmed2 = raw2.trim();
                                     if (trimmed2.length > 0) changedCfg = JSON.parse(trimmed2);
                                     else console.log(`Watched config file is empty; continuing with defaults + existing overrides.`);
@@ -114,7 +114,7 @@ class Config {
             this._isLoading = false;
         }
         catch (err) {
-            logger.error("Error writing configuration file %s", err);
+            logger.error('Error writing configuration file %s', err);
             if (typeof callback === 'function') callback(err);
 
         }
@@ -155,7 +155,7 @@ class Config {
         if (section.indexOf('.') !== -1) {
             const arr = section.split('.');
             for (let i = 0; i < arr.length; i++) {
-                if (typeof c[arr[i]] === "undefined") {
+                if (typeof c[arr[i]] === 'undefined') {
                     c = null;
                     break;
                 } else c = c[arr[i]];
@@ -168,7 +168,7 @@ class Config {
         this.ensurePath(baseDir + '/logs/');
         this.ensurePath(baseDir + '/data/');
         this.ensurePath(baseDir + '/backups/');
-        this.ensurePath(baseDir + '/web/bindings/custom/')
+        this.ensurePath(baseDir + '/web/bindings/custom/');
         // this.ensurePath(baseDir + '/replay/');
         //setTimeout(() => { config.update(); }, 100);
     }
@@ -192,7 +192,7 @@ class Config {
         }
     }
     public getInterfaceByUuid(uuid: string){
-        let interfaces = this._cfg.web.interfaces
+        let interfaces = this._cfg.web.interfaces;
         for (var i in interfaces) {
             if (interfaces[i].uuid === uuid) {
                 return interfaces[i];

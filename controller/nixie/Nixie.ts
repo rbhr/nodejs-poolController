@@ -1,13 +1,13 @@
 ﻿import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { webApp } from "../../web/Server";
-import { logger } from "../../logger/Logger";
-import { INixieControlPanel } from "./NixieEquipment";
-import { NixieChemControllerCollection } from "./chemistry/ChemController";
-import { NixieChemDoserCollection } from "./chemistry/ChemDoser";
+import { webApp } from '../../web/Server';
+import { logger } from '../../logger/Logger';
+import { INixieControlPanel } from './NixieEquipment';
+import { NixieChemControllerCollection } from './chemistry/ChemController';
+import { NixieChemDoserCollection } from './chemistry/ChemDoser';
 
-import { sys, PoolSystem } from "../../controller/Equipment";
+import { sys, PoolSystem } from '../../controller/Equipment';
 import { NixieCircuitCollection } from './circuits/Circuit';
 import { NixieBodyCollection } from './bodies/Body';
 import { NixieValveCollection } from './valves/Valve';
@@ -92,7 +92,7 @@ export class NixieControlPanel implements INixieControlPanel {
             await this.chemDosers.initAsync(equipment.chemDosers);
             await this.pumps.initAsync(equipment.pumps);
             await this.schedules.initAsync(equipment.schedules);
-            logger.info(`Nixie Controller Initialized`)
+            logger.info(`Nixie Controller Initialized`);
         }
         catch (err) { return Promise.reject(err); }
     }

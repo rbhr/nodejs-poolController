@@ -2,11 +2,11 @@
 import { utils, Timestamp, ControllerType } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Chlorinator, sys, ChlorinatorCollection } from "../../../controller/Equipment";
-import { ChlorinatorState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Chlorinator, sys, ChlorinatorCollection } from '../../../controller/Equipment';
+import { ChlorinatorState, state, } from '../../State';
 import { setTimeout as setTimeoutSync, clearTimeout } from 'timers';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 import { Outbound, Protocol, Response } from '../../comms/messages/Messages';
 import { conn } from '../../comms/Comms';
 import { ncp } from '../Nixie';
@@ -53,7 +53,7 @@ export class NixieChlorinatorCollection extends NixieEquipmentCollection<NixieCh
                 let c = this[i] as NixieChlorinator;
                 await c.setServiceModeAsync();
             }
-        } catch (err) { logger.error(`Nixie Chlorinator Error setServiceModeAsync: ${err.message}`) }
+        } catch (err) { logger.error(`Nixie Chlorinator Error setServiceModeAsync: ${err.message}`); }
     }
     public async initAsync(chlorinators: ChlorinatorCollection) {
         try {

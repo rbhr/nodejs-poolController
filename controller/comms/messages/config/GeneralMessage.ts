@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, General } from "../../../Equipment";
-import { ControllerType } from "../../../Constants";
-import { logger } from "../../../../logger/Logger";
+import { Inbound } from '../Messages';
+import { sys, General } from '../../../Equipment';
+import { ControllerType } from '../../../Constants';
+import { logger } from '../../../../logger/Logger';
 export class GeneralMessage {
     private static isIntellicenterV3(): boolean {
         return sys.controllerType === ControllerType.IntelliCenter && sys.equipment.isIntellicenterV3 === true;
@@ -132,7 +132,7 @@ export class GeneralMessage {
                 msg.isProcessed = true;
                 break;
             default:
-                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                 break;
         }
     }

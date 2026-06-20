@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, Schedule, EggTimer } from "../../../Equipment";
-import { state } from "../../../State";
-import { ControllerType } from "../../../Constants";
-import { logger } from "../../../../logger/Logger";
+import { Inbound } from '../Messages';
+import { sys, Schedule, EggTimer } from '../../../Equipment';
+import { state } from '../../../State';
+import { ControllerType } from '../../../Constants';
+import { logger } from '../../../../logger/Logger';
 export class ScheduleMessage {
     // [165, 63, 15, 16, 30, 42][3, 28, 5, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][1, 143]
     //
@@ -98,7 +98,7 @@ export class ScheduleMessage {
                     ScheduleMessage.processCoolSetpoint(msg);
                     break;
                 default:
-                    logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                    logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                     break;
 
             }

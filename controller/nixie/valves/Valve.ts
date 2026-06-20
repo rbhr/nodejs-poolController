@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Valve, ValveCollection, sys } from "../../../controller/Equipment";
-import { ValveState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Valve, ValveCollection, sys } from '../../../controller/Equipment';
+import { ValveState, state, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 
 export class NixieValveCollection extends NixieEquipmentCollection<NixieValve> {
     public async deleteValveAsync(id: number) {
@@ -139,7 +139,7 @@ export class NixieValve extends NixieEquipment {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Valve checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Valve checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(valve: Valve, vstate: ValveState) {
         try {

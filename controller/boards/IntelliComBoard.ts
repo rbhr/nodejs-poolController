@@ -49,7 +49,7 @@ export class IntelliComBoard extends EasyTouchBoard {
         let md = mod.get();
         eq.maxBodies = md.bodies = typeof mt.bodies !== 'undefined' ? mt.bodies : mt.shared ? 2 : 1;
         eq.maxCircuits = md.circuits = typeof mt.circuits !== 'undefined' ? mt.circuits : 4;
-        eq.maxFeatures = md.features = typeof mt.features !== 'undefined' ? mt.features : 0
+        eq.maxFeatures = md.features = typeof mt.features !== 'undefined' ? mt.features : 0;
         eq.maxValves = md.valves = typeof mt.valves !== 'undefined' ? mt.valves : 2;
         eq.maxPumps = md.maxPumps = typeof mt.pumps !== 'undefined' ? mt.pumps : 2;
         eq.shared = mt.shared;
@@ -60,7 +60,7 @@ export class IntelliComBoard extends EasyTouchBoard {
         eq.maxCustomNames = 10;
         // Calculate out the invalid ids.
         sys.board.equipmentIds.invalidIds.set([]);
-        sys.board.equipmentIds.invalidIds.merge([5, 7, 8, 9, 13, 14, 15, 16, 17, 18])
+        sys.board.equipmentIds.invalidIds.merge([5, 7, 8, 9, 13, 14, 15, 16, 17, 18]);
         sys.equipment.model = mt.desc;
         this.initBodyDefaults();
         state.emitControllerChange();

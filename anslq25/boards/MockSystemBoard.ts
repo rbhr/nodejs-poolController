@@ -16,14 +16,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { logger } from "../../logger/Logger";
+import { logger } from '../../logger/Logger';
 import { setTimeout as setTimeoutSync } from 'timers';
-import { Inbound, Outbound, Protocol } from "../../controller/comms/messages/Messages";
-import { byteValueMap, byteValueMaps, SystemBoard } from "../../controller/boards/SystemBoard";
-import { Anslq25, PoolSystem, sys } from "../../controller/Equipment";
-import { ControllerType, utils } from "../../controller/Constants";
-import { conn } from "../../controller/comms/Comms";
-import { MockEasyTouch } from "./MockEasyTouchBoard";
+import { Inbound, Outbound, Protocol } from '../../controller/comms/messages/Messages';
+import { byteValueMap, byteValueMaps, SystemBoard } from '../../controller/boards/SystemBoard';
+import { Anslq25, PoolSystem, sys } from '../../controller/Equipment';
+import { ControllerType, utils } from '../../controller/Constants';
+import { conn } from '../../controller/comms/Comms';
+import { MockEasyTouch } from './MockEasyTouchBoard';
 
 export class MockSystemBoard {
   public valueMaps: byteValueMaps = new byteValueMaps();
@@ -37,7 +37,7 @@ export class MockSystemBoard {
     }, 5000);
   }
   public expansionBoards: byteValueMap = new byteValueMap();
-  public get statusInterval(): number { return this._statusInterval };
+  public get statusInterval(): number { return this._statusInterval; };
   public system: MockSystemCommands = new MockSystemCommands(this);
   public circuits: MockCircuitCommands = new MockCircuitCommands(this);
   public schedules: MockScheduleCommands = new MockScheduleCommands(this);

@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { ControllerType } from "../../../Constants";
-import { sys, Feature } from "../../../Equipment";
-import { state, FeatureState } from "../../../State";
-import { logger } from "../../../../logger/Logger";
+import { Inbound } from '../Messages';
+import { ControllerType } from '../../../Constants';
+import { sys, Feature } from '../../../Equipment';
+import { state, FeatureState } from '../../../State';
+import { logger } from '../../../../logger/Logger';
 export class FeatureMessage {
     public static process(msg: Inbound): void {
         switch (msg.extractPayloadByte(1)) {
@@ -63,7 +63,7 @@ export class FeatureMessage {
                 msg.isProcessed = true;
                 break;
             default:
-                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                 break;
         }
     }

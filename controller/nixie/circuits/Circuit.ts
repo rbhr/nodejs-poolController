@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Circuit, CircuitCollection, sys } from "../../../controller/Equipment";
-import { CircuitState, state, ICircuitState, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Circuit, CircuitCollection, sys } from '../../../controller/Equipment';
+import { CircuitState, state, ICircuitState, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 import { delayMgr } from '../../../controller/Lockouts';
 import { time } from 'console';
 
@@ -447,7 +447,7 @@ export class NixieCircuit extends NixieEquipment {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Circuit checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Circuit checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(circuit: Circuit, cstate: CircuitState) {
         try {

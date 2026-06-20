@@ -1,15 +1,15 @@
 ﻿import { clearTimeout, setTimeout } from 'timers';
 import { conn } from '../../../controller/comms/Comms';
 import { Outbound, Protocol, Response } from '../../../controller/comms/messages/Messages';
-import { ChemDoser, ChemDoserCollection, ChemFlowSensor, ChemicalPump, ChemicalTank, sys } from "../../../controller/Equipment";
+import { ChemDoser, ChemDoserCollection, ChemFlowSensor, ChemicalPump, ChemicalTank, sys } from '../../../controller/Equipment';
 import { logger } from '../../../logger/Logger';
-import { InterfaceServerResponse, webApp } from "../../../web/Server";
+import { InterfaceServerResponse, webApp } from '../../../web/Server';
 import { Timestamp, utils } from '../../Constants';
 import { EquipmentNotFoundError, EquipmentTimeoutError, InvalidEquipmentDataError, InvalidEquipmentIdError, InvalidOperationError } from '../../Errors';
-import { ChemDoserState, ChemicalChlorState, ChemicalDoseState, ChemicalPumpState, ChemicalState, ChemicalTankState, ChlorinatorState, state } from "../../State";
+import { ChemDoserState, ChemicalChlorState, ChemicalDoseState, ChemicalPumpState, ChemicalState, ChemicalTankState, ChlorinatorState, state } from '../../State';
 import { ncp } from '../Nixie';
-import { INixieControlPanel, NixieChildEquipment, NixieEquipment, NixieEquipmentCollection } from "../NixieEquipment";
-import { INixieChemController, NixieChemFlowSensor, NixieChemPump, NixieChemTank, NixieChemMix, INixieChemical } from "./ChemController";
+import { INixieControlPanel, NixieChildEquipment, NixieEquipment, NixieEquipmentCollection } from '../NixieEquipment';
+import { INixieChemController, NixieChemFlowSensor, NixieChemPump, NixieChemTank, NixieChemMix, INixieChemical } from './ChemController';
 export class NixieChemDoserCollection extends NixieEquipmentCollection<NixieChemDoserBase> {
     public async manualDoseAsync(id: number, data: any) {
         try {
@@ -135,7 +135,7 @@ export class NixieChemDoserBase extends NixieEquipment implements INixieChemCont
     public get currentMix(): NixieChemMix { return this._currentMix; }
     public set currentMix(val: NixieChemMix) {
         if (typeof val === 'undefined' && typeof this._currentMix !== 'undefined') logger.debug(`${this.chem.chemType} mix set to undefined`);
-        else logger.debug(`Set new current mix ${this.chem.chemType}`)
+        else logger.debug(`Set new current mix ${this.chem.chemType}`);
         this._currentMix = val;
     }
     constructor(ncp: INixieControlPanel, chem: ChemDoser) {
@@ -215,7 +215,7 @@ export class NixieChemDoserBase extends NixieEquipment implements INixieChemCont
 
                 else
                     this.currentMix.set({ time: this.chem.mixingTime, timeMixed: 0 });
-                logger.info(`Chem Doser begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`)
+                logger.info(`Chem Doser begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`);
                 schem.mixTimeRemaining = this.currentMix.timeRemaining;
             }
             if (typeof this._mixTimer === 'undefined' || !this._mixTimer) {
@@ -228,7 +228,7 @@ export class NixieChemDoserBase extends NixieEquipment implements INixieChemCont
     public async mixChemicals(schem: ChemDoserState, mixingTime?: number): Promise<void> {
         try {
             if (this._stoppingMix) {
-                logger.verbose(`${schem.chemType} is currently stopping mixChemicals ignored.`)
+                logger.verbose(`${schem.chemType} is currently stopping mixChemicals ignored.`);
                 return;
             }
             if (this._processingMix) {
@@ -648,7 +648,7 @@ export class NixieChemDoser extends NixieChemDoserBase implements INixieChemical
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(chem: ChemDoser, schem: ChemDoserState) {
         try {
@@ -711,7 +711,7 @@ export class NixieChemDoser extends NixieChemDoserBase implements INixieChemical
                 }
                 else
                     this.currentMix.set({ time: this.chem.mixingTime, timeMixed: 0 });
-                logger.info(`Chem Doser begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`)
+                logger.info(`Chem Doser begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`);
                 schem.mixTimeRemaining = this.currentMix.timeRemaining;
             }
             if (typeof this._mixTimer === 'undefined' || !this._mixTimer) {

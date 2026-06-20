@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //require('source-map-support').install();
 import 'source-map-support/register';
 
-import { logger } from "./logger/Logger";
-import { config } from "./config/Config";
-import { conn } from "./controller/comms/Comms";
-import { sys } from "./controller/Equipment";
+import { logger } from './logger/Logger';
+import { config } from './config/Config';
+import { conn } from './controller/comms/Comms';
+import { sys } from './controller/Equipment';
 
-import { state } from "./controller/State";
-import { webApp, REMInterfaceServer } from "./web/Server";
+import { state } from './controller/State';
+import { webApp, REMInterfaceServer } from './web/Server';
 import * as readline from 'readline';
-import { sl } from './controller/comms/ScreenLogic'
+import { sl } from './controller/comms/ScreenLogic';
 
 export async function initAsync() {
     try {
@@ -107,10 +107,10 @@ else {
 if (typeof process === 'object') {
     process.on('unhandledRejection', (error: Error, promise) => {
         console.group('unhandled rejection');
-        console.error("== Node detected an unhandled rejection! ==");
+        console.error('== Node detected an unhandled rejection! ==');
         console.error(error.message);
         console.error(error.stack);
         console.groupEnd();
     });
 }
-( async () => { await initAsync() })();
+( async () => { await initAsync(); })();

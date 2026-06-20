@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import {Inbound} from "../Messages";
-import { sys, Remote } from "../../../Equipment";
-import { state } from "../../../State";
-import {ControllerType} from "../../../Constants";
+import {Inbound} from '../Messages';
+import { sys, Remote } from '../../../Equipment';
+import { state } from '../../../State';
+import {ControllerType} from '../../../Constants';
 export class RemoteMessage {
     private static maxCircuits: number=8;
     public static process(msg: Inbound): void {
@@ -106,7 +106,7 @@ export class RemoteMessage {
                     remote.button4 = msg.extractPayloadByte(3);
                     if (!remote.button1 && !remote.button2 && !remote.button3 && !remote.button4) remote.isActive = false;
                     else remote.isActive = true;
-                    remote.name = "QuickTouch";
+                    remote.name = 'QuickTouch';
                     msg.isProcessed = true;
                     break;
                 }
@@ -117,23 +117,23 @@ export class RemoteMessage {
                     let bActive = false;
                     let bIS10 = false;
                     for (let i = 1; i <= msg.payload.length - 1; i++) {
-                        remote["button" + i] = msg.extractPayloadByte(i);
-                        bActive = bActive || remote["button" + i] > 0;
+                        remote['button' + i] = msg.extractPayloadByte(i);
+                        bActive = bActive || remote['button' + i] > 0;
                         if (i >= 4 && !bIS10) {
-                            bIS10 = bIS10 || remote["button" + i] > 0;
+                            bIS10 = bIS10 || remote['button' + i] > 0;
                         }
                     }
                     remote.isActive = bActive;
                     if (bIS10) // is10  
                     {
                         remote.type = 2;
-                        remote.name = "is10";
+                        remote.name = 'is10';
                     }
                     else // is4
                     {
                         
                         remote.type = 1;
-                        remote.name = "is4";
+                        remote.name = 'is4';
                     }
                     msg.isProcessed = true;
                     break;
@@ -260,7 +260,7 @@ export class RemoteMessage {
                 remote['button' + (i + 1)] = undefined;
                 continue;
             }
-            remote["button" + (i + 1)] = msg.extractPayloadByte(i + 2);
+            remote['button' + (i + 1)] = msg.extractPayloadByte(i + 2);
         }
         msg.isProcessed = true;
     }

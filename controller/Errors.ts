@@ -15,9 +15,9 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import extend = require("extend");
-import { Message, Outbound, Inbound } from "./comms/messages/Messages";
-import * as path from "path";
+import extend = require('extend');
+import { Message, Outbound, Inbound } from './comms/messages/Messages';
+import * as path from 'path';
 
 // Internal abstract class for all errors.
 class ApiError extends Error {
@@ -66,7 +66,7 @@ class ApiError extends Error {
     }
     public code: number = 0;
     public httpCode: number = 500;
-    public position: any = {}
+    public position: any = {};
 }
 class EquipmentError extends ApiError {
     constructor(message: string, code: number, eqType: string) {

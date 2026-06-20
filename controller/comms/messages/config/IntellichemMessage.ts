@@ -15,10 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound, Outbound } from "../Messages";
-import { sys, ControllerType } from "../../../Equipment";
-import { state } from "../../../State";
-import { webApp } from "../../../../web/Server";
+import { Inbound, Outbound } from '../Messages';
+import { sys, ControllerType } from '../../../Equipment';
+import { state } from '../../../State';
+import { webApp } from '../../../../web/Server';
 
 export class IntellichemMessage {
     public static process(msg: Inbound): void {
@@ -105,7 +105,7 @@ export class IntellichemMessage {
             chem.orp.useChlorinator = (msg.extractPayloadByte(36) & 0x10) === 1 ? true : false;
             chem.HMIAdvancedDisplay = (msg.extractPayloadByte(36) & 0x20) === 1 ? true : false;
             chem.ph.phSupply = (msg.extractPayloadByte(36) & 0x40) === 1 ? true : false; // acid pH dosing = 1; base pH dosing = 0;
-            chem.firmware = `${msg.extractPayloadByte(38)}.${msg.extractPayloadByte(37).toString().padStart(3, '0')}`
+            chem.firmware = `${msg.extractPayloadByte(38)}.${msg.extractPayloadByte(37).toString().padStart(3, '0')}`;
             schem.warnings.waterChemistry = msg.extractPayloadByte(39);
             schem.lastComm = new Date().getTime();
             if(typeof chem.body === 'undefined') chem.body = schem.body = 0;

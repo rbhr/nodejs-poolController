@@ -15,13 +15,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, Body, ICircuitGroup, LightGroup, CircuitGroup, Cover, SecurityRole, Remote } from "../../../Equipment";
-import { state, ICircuitGroupState, LightGroupState, CircuitGroupState } from "../../../State";
-import { ControllerType, Timestamp, utils } from "../../../Constants";
-import { logger } from "../../../../logger/Logger";
-import { webApp } from "../../../../web/Server";
-import { CoverMessage } from "./CoverMessage";
+import { Inbound } from '../Messages';
+import { sys, Body, ICircuitGroup, LightGroup, CircuitGroup, Cover, SecurityRole, Remote } from '../../../Equipment';
+import { state, ICircuitGroupState, LightGroupState, CircuitGroupState } from '../../../State';
+import { ControllerType, Timestamp, utils } from '../../../Constants';
+import { logger } from '../../../../logger/Logger';
+import { webApp } from '../../../../web/Server';
+import { CoverMessage } from './CoverMessage';
 export class ExternalMessage {
     private static normalizePumpBodyCode(rawBody: number): number {
         const poolBody = sys.board.valueMaps.pumpBodies.getValue('pool');
@@ -161,7 +161,7 @@ export class ExternalMessage {
                 ExternalMessage.processCircuitGroupState(13, msg);
                 break;
             default:
-                logger.debug(`Unprocessed Message ${msg.toPacket()}`)
+                logger.debug(`Unprocessed Message ${msg.toPacket()}`);
                 break;
         }
     }
@@ -1061,7 +1061,7 @@ export class ExternalMessage {
         msg.isProcessed = true;
     }
     private static processTempSettings(msg: Inbound) {
-        let fnTranslateByte = (byte: number) => { return (byte & 0x007F) * (((byte & 0x0080) > 0) ? -1 : 1); }
+        let fnTranslateByte = (byte: number) => { return (byte & 0x007F) * (((byte & 0x0080) > 0) ? -1 : 1); };
         const decodeFreezeOverride = (raw: number) => raw <= 3 ? (30 + (raw * 60)) : raw;
         
         // v3.004+: Wireless sends the FULL options block, not a single-field notification.

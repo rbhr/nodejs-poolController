@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { EventEmitter } from 'events';
-import { logger } from "../logger/Logger";
+import { logger } from '../logger/Logger';
 import * as util from 'util';
 class HeliotropeContext {
     constructor(longitude: number, latitude: number, zenith: number) {
@@ -31,7 +31,7 @@ class HeliotropeContext {
         asin: function (x) { return (180 / Math.PI) * Math.asin(x); },
         acos: function (x) { return (180 / Math.PI) * Math.acos(x); },
         atan: function (x) { return (180 / Math.PI) * Math.atan(x); }
-    }
+    };
     private dt: Date;
     private _longitude: number;
     private _latitude: number;
@@ -266,7 +266,7 @@ export class Heliotrope {
             prevSunrise: new Date(times.prevSunrise.getTime() + ms),
             prevSunset: new Date(times.prevSunset.getTime() + ms),
             isValid: true
-        } 
+        }; 
     }
     public getAdjustedTimes(hours = 0, min = 0): { sunrise?: Date, sunset?: Date, nextSunrise?: Date, nextSunset?: Date, prevSunrise?: Date, prevSunset: Date, isValid: boolean } {
         let ms = (hours * 3600000) + (min * 60000);
@@ -278,7 +278,7 @@ export class Heliotrope {
             prevSunrise: new Date(this.prevSunrise.getTime() + ms),
             prevSunset: new Date(this.prevSunset.getTime() + ms),
             isValid: this.isValid
-        } 
+        }; 
     }
 }
 export class Timestamp {
@@ -360,7 +360,7 @@ export class Timestamp {
             var t = Math.floor(Math.abs(n));
             return (t < 10 ? '0' : '') + t;
         };
-        return new Date(dt.getTime() - (tzo * 60000)).toISOString().slice(0, -1) + (tzo > 0 ? '-' : '+') + pad(tzo / 60) + pad(tzo % 60)
+        return new Date(dt.getTime() - (tzo * 60000)).toISOString().slice(0, -1) + (tzo > 0 ? '-' : '+') + pad(tzo / 60) + pad(tzo % 60);
     }
     public setTimeFromSystemClock() {
         let dt = this._dt;
@@ -467,7 +467,7 @@ export class Utils {
             }
         }
         return value;
-    }
+    };
     public static jsonReplacer = (key, value) => {
         // Add in code to change Timestamp into a string.
         if (typeof value !== 'undefined' && value) {
@@ -475,10 +475,10 @@ export class Utils {
             else if (typeof value.getTime === 'function') return Timestamp.toISOLocal(value);
         }
         return value;
-    }
+    };
     public static parseJSON(json: string) { return JSON.parse(json, Utils.jsonReviver); }
     public static stringifyJSON(obj: any) { return JSON.stringify(obj, Utils.jsonReplacer); }
-    public uuid(a?, b?) { for (b = a = ''; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : '-'); return b }
+    public uuid(a?, b?) { for (b = a = ''; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : '-'); return b; }
     public convert = {
         temperature: {
             f: {
@@ -661,7 +661,7 @@ export class Utils {
                 if (typeof fn !== 'undefined' && typeof fn[to.toLowerCase()] === 'function') return fn[to.toLowerCase()](val);
             }
         }
-    }
+    };
     public formatDuration(seconds: number): string {
         if (seconds === 0) return '0sec';
         var fmt = '';

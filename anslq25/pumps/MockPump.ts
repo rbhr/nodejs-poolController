@@ -1,7 +1,7 @@
-import { sys } from "../../controller/Equipment";
-import { PumpState, state } from "../../controller/State";
-import { Outbound } from "../../controller/comms/messages/Messages";
-import { conn } from "controller/comms/Comms";
+import { sys } from '../../controller/Equipment';
+import { PumpState, state } from '../../controller/State';
+import { Outbound } from '../../controller/comms/messages/Messages';
+import { conn } from 'controller/comms/Comms';
 
 export class MockPump {
   constructor(){}

@@ -1,11 +1,11 @@
-import { logger } from "../../logger/Logger";
-import { Inbound, Outbound, Protocol } from "../../controller/comms/messages/Messages";
-import { MockSystemCommands, MockSystemBoard, MockCircuitCommands, MockScheduleCommands, MockHeaterCommands, MockValveCommands, MockRemoteCommands, MockPumpCommands } from "./MockSystemBoard";
-import { BodyTempState, state } from "../../controller/State";
-import { ControllerType, Heater, PoolSystem, PumpCircuit, sys } from "../../controller/Equipment";
-import { byteValueMap } from "../../controller/boards/SystemBoard";
-import { conn } from "../../controller/comms/Comms";
-import { Timestamp, utils } from "../../controller/Constants";
+import { logger } from '../../logger/Logger';
+import { Inbound, Outbound, Protocol } from '../../controller/comms/messages/Messages';
+import { MockSystemCommands, MockSystemBoard, MockCircuitCommands, MockScheduleCommands, MockHeaterCommands, MockValveCommands, MockRemoteCommands, MockPumpCommands } from './MockSystemBoard';
+import { BodyTempState, state } from '../../controller/State';
+import { ControllerType, Heater, PoolSystem, PumpCircuit, sys } from '../../controller/Equipment';
+import { byteValueMap } from '../../controller/boards/SystemBoard';
+import { conn } from '../../controller/comms/Comms';
+import { Timestamp, utils } from '../../controller/Constants';
 export class MockEasyTouch extends MockSystemBoard {
   constructor(system: PoolSystem) {
     super(system);
@@ -136,7 +136,7 @@ class EasyTouchMockSystemCommands extends MockSystemCommands {
       // sys.equipment.model;
       // let mod = sys.board.valueMaps.expansionBoards.get(sys.equipment.modules.getItemById(0).type);
       let mt = sys.equipment.modules.getItemById(0);
-      let model1 = mt.type
+      let model1 = mt.type;
       msg.setPayloadByte(27, model1); // model1
       msg.setPayloadByte(28, 13); // model2
 
@@ -167,7 +167,7 @@ class EasyTouchMockSystemCommands extends MockSystemCommands {
 
           let circuit = circuits[circuitId];
           if (circuit.isActive && circuit.isOn) {
-            msg.setPayloadByte(i, msg[i] & (1 >> j))
+            msg.setPayloadByte(i, msg[i] & (1 >> j));
           }
         }
         circuitId++;

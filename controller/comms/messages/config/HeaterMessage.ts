@@ -15,12 +15,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { sys, Heater } from "../../../Equipment";
-import { ControllerType } from "../../../Constants";
-import { logger } from "../../../../logger/Logger";
-import { state } from "../../../State";
-import { ncp } from "../../../nixie/Nixie";
+import { Inbound } from '../Messages';
+import { sys, Heater } from '../../../Equipment';
+import { ControllerType } from '../../../Constants';
+import { logger } from '../../../../logger/Logger';
+import { state } from '../../../State';
+import { ncp } from '../../../nixie/Nixie';
 export class HeaterMessage {
     public static process(msg: Inbound): void {
         switch (sys.controllerType) {
@@ -58,7 +58,7 @@ export class HeaterMessage {
                         HeaterMessage.processMaxBoostTemp(msg);
                         break;
                     default:
-                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                         break;
                 }
                 break;
@@ -86,7 +86,7 @@ export class HeaterMessage {
                                 await ncp.heaters.deleteHeaterAsync(heater.id);
                                 logger.debug(`${heater.name} control returned to OCP.`);
                             }
-                            catch (err) { logger.error(`Error with OCP reclaiming control over gas ${heater.name}: ${err}`) }
+                            catch (err) { logger.error(`Error with OCP reclaiming control over gas ${heater.name}: ${err}`); }
                         })();
                     }
                 }
@@ -371,7 +371,7 @@ export class HeaterMessage {
                         await ncp.heaters.deleteHeaterAsync(i + 1);
                         logger.debug(`Heater control returned to OCP.`);
                     }
-                    catch (err) { logger.error(`Error with OCP reclaiming control over heater: ${err}`) }
+                    catch (err) { logger.error(`Error with OCP reclaiming control over heater: ${err}`); }
                 })();
             }
         }
@@ -407,7 +407,7 @@ export class HeaterMessage {
                             await ncp.heaters.deleteHeaterAsync(2);
                             logger.debug(`Heater control returned to OCP.`);
                         }
-                        catch (err) { logger.error(`Error with OCP reclaiming control over heater: ${err}`) }
+                        catch (err) { logger.error(`Error with OCP reclaiming control over heater: ${err}`); }
                     })();
                 }
                 heater.master = 0;

@@ -23,9 +23,9 @@ import { byteValueMap, EquipmentIdRange } from './SystemBoard';
 import { state, ICircuitState } from '../State';
 import { logger } from '../../logger/Logger';
 import { conn } from '../comms/Comms';
-import { Outbound } from "../comms/messages/Messages";
-import { InvalidEquipmentIdError } from "../Errors";
-import { utils } from "../Constants";
+import { Outbound } from '../comms/messages/Messages';
+import { InvalidEquipmentIdError } from '../Errors';
+import { utils } from '../Constants';
 
 export class SunTouchBoard extends EasyTouchBoard {
     constructor(system: PoolSystem) {
@@ -125,7 +125,7 @@ export class SunTouchBoard extends EasyTouchBoard {
         let md = mod.get();
         eq.maxBodies = md.bodies = typeof mt.bodies !== 'undefined' ? mt.bodies : mt.shared ? 2 : 1;
         eq.maxCircuits = md.circuits = typeof mt.circuits !== 'undefined' ? mt.circuits : 3;
-        eq.maxFeatures = md.features = typeof mt.features !== 'undefined' ? mt.features : 0
+        eq.maxFeatures = md.features = typeof mt.features !== 'undefined' ? mt.features : 0;
         eq.maxValves = md.valves = typeof mt.valves !== 'undefined' ? mt.valves : 2;
         eq.maxPumps = md.maxPumps = typeof mt.pumps !== 'undefined' ? mt.pumps : 2;
         eq.shared = mt.shared || false;

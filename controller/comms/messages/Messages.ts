@@ -15,39 +15,39 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { ConfigMessage } from "./config/ConfigMessage";
-import { PumpMessage } from "./config/PumpMessage";
-import { VersionMessage } from "./status/VersionMessage";
-import { PumpStateMessage } from "./status/PumpStateMessage";
-import { EquipmentStateMessage } from "./status/EquipmentStateMessage";
-import { HeaterStateMessage } from "./status/HeaterStateMessage";
-import { ChlorinatorStateMessage } from "./status/ChlorinatorStateMessage";
-import { ChlorinatorMessage } from "./config/ChlorinatorMessage";
-import { ExternalMessage } from "./config/ExternalMessage";
-import { Timestamp, ControllerType } from "../../Constants";
-import { CircuitMessage } from "./config/CircuitMessage";
+import { ConfigMessage } from './config/ConfigMessage';
+import { PumpMessage } from './config/PumpMessage';
+import { VersionMessage } from './status/VersionMessage';
+import { PumpStateMessage } from './status/PumpStateMessage';
+import { EquipmentStateMessage } from './status/EquipmentStateMessage';
+import { HeaterStateMessage } from './status/HeaterStateMessage';
+import { ChlorinatorStateMessage } from './status/ChlorinatorStateMessage';
+import { ChlorinatorMessage } from './config/ChlorinatorMessage';
+import { ExternalMessage } from './config/ExternalMessage';
+import { Timestamp, ControllerType } from '../../Constants';
+import { CircuitMessage } from './config/CircuitMessage';
 import { config } from '../../../config/Config';
 import { sys } from '../../Equipment';
-import { logger } from "../../../logger/Logger";
-import { CustomNameMessage } from "./config/CustomNameMessage";
-import { ScheduleMessage } from "./config/ScheduleMessage";
-import { RemoteMessage } from "./config/RemoteMessage";
-import { OptionsMessage } from "./config/OptionsMessage";
-import { EquipmentMessage } from "./config/EquipmentMessage";
-import { ValveMessage } from "./config/ValveMessage";
-import { state } from "../../State";
-import { HeaterMessage } from "./config/HeaterMessage";
-import { CircuitGroupMessage } from "./config/CircuitGroupMessage";
-import { IntellichemMessage } from "./config/IntellichemMessage";
-import { TouchScheduleCommands } from "controller/boards/EasyTouchBoard";
-import { IntelliValveStateMessage } from "./status/IntelliValveStateMessage";
-import { IntelliChemStateMessage } from "./status/IntelliChemStateMessage";
-import { RegalModbusStateMessage } from "./status/RegalModbusStateMessage";
-import { NeptuneModbusStateMessage } from "./status/NeptuneModbusStateMessage";
-import { OutboundMessageError } from "../../Errors";
-import { conn } from "../Comms"
-import extend = require("extend");
-import { MessagesMock } from "../../../anslq25/MessagesMock";
+import { logger } from '../../../logger/Logger';
+import { CustomNameMessage } from './config/CustomNameMessage';
+import { ScheduleMessage } from './config/ScheduleMessage';
+import { RemoteMessage } from './config/RemoteMessage';
+import { OptionsMessage } from './config/OptionsMessage';
+import { EquipmentMessage } from './config/EquipmentMessage';
+import { ValveMessage } from './config/ValveMessage';
+import { state } from '../../State';
+import { HeaterMessage } from './config/HeaterMessage';
+import { CircuitGroupMessage } from './config/CircuitGroupMessage';
+import { IntellichemMessage } from './config/IntellichemMessage';
+import { TouchScheduleCommands } from 'controller/boards/EasyTouchBoard';
+import { IntelliValveStateMessage } from './status/IntelliValveStateMessage';
+import { IntelliChemStateMessage } from './status/IntelliChemStateMessage';
+import { RegalModbusStateMessage } from './status/RegalModbusStateMessage';
+import { NeptuneModbusStateMessage } from './status/NeptuneModbusStateMessage';
+import { OutboundMessageError } from '../../Errors';
+import { conn } from '../Comms';
+import extend = require('extend');
+import { MessagesMock } from '../../../anslq25/MessagesMock';
 
 export enum Direction {
     In = 'in',
@@ -221,7 +221,7 @@ export class Message {
                         case 0x10:
                             return 1;
                         case 0x20:
-                            return 0
+                            return 0;
                     }
                 case 0x44:  // Set demand
                     return 3;
@@ -233,10 +233,10 @@ export class Message {
                             return 2;
                     }
                 case 0x46:  // Read identification
-                    console.log("RegalModbus: Read identification not implemented yet.");
+                    console.log('RegalModbus: Read identification not implemented yet.');
                     break;
                 case 0x64:  // Configuration read/write
-                    console.log("RegalModbus: Configuration read/write not implemented yet.");
+                    console.log('RegalModbus: Configuration read/write not implemented yet.');
                     break;
                 case 0x65:  // Store configuration
                     return 0;
@@ -998,7 +998,7 @@ export class Inbound extends Message {
                         EquipmentStateMessage.process(this);
                         break;
                     default:
-                        logger.info(`An unprocessed message was received ${this.toPacket()}`)
+                        logger.info(`An unprocessed message was received ${this.toPacket()}`);
                         break;
 
                 }
@@ -1092,7 +1092,7 @@ export class Inbound extends Message {
                     case 114:
                     case 115:
                         HeaterStateMessage.process(this);
-                        break
+                        break;
                     case 147:
                         IntellichemMessage.process(this);
                         break;
@@ -1164,7 +1164,7 @@ export class Inbound extends Message {
                 NeptuneModbusStateMessage.process(this);
                 break;
             default:
-                logger.debug(`Unprocessed Message ${this.toPacket()}`)
+                logger.debug(`Unprocessed Message ${this.toPacket()}`);
                 break;
         }
     }
@@ -1315,7 +1315,7 @@ export class Outbound extends OutboundCommon {
         this.action = action;
         this.payload.push.apply(this.payload, payload);
         this.calcChecksum();
-        if (typeof response === "boolean" && response)
+        if (typeof response === 'boolean' && response)
             this.response = Response.create({ protocol: this.protocol, response: true });
         else
             this.response = response as Response;
@@ -1512,7 +1512,7 @@ export class Response extends OutboundCommon {
     public set action(val: number) { (this.protocol !== Protocol.Chlorinator) ? this.header[4] = val : this.header[3] = val; }
     public get action(): number {
         if (this.protocol === Protocol.Chlorinator) return this.header[3];
-        else if (typeof this.header[4] !== 'undefined') return this.header[4]
+        else if (typeof this.header[4] !== 'undefined') return this.header[4];
         else return -1;
     }
     constructor(proto: Protocol, source: number, dest: number, action?: number, payload?: number[], ack?: number, callback?: (err, msg?: Outbound) => void) {

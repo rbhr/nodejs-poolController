@@ -15,37 +15,37 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import * as dns from "dns";
+import * as dns from 'dns';
 import { EventEmitter } from 'events';
-import * as fs from "fs";
-import * as http from "http";
-import * as http2 from "http2";
-import * as https from "https";
+import * as fs from 'fs';
+import * as http from 'http';
+import * as http2 from 'http2';
+import * as https from 'https';
 import * as multicastdns from 'multicast-dns';
-import * as ssdp from 'node-ssdp';
+import { SsdpServer as SsdpAdvertiser } from './services/utilities/Ssdp';
 import * as os from 'os';
-import * as path from "path";
-import { RemoteSocket, Server as SocketIoServer, Socket } from "socket.io";
-import { io as sockClient } from "socket.io-client";
-import { URL } from "url";
-import { config } from "../config/Config";
-import { conn } from "../controller/comms/Comms";
-import { Inbound, Outbound } from "../controller/comms/messages/Messages";
-import { Timestamp, utils } from "../controller/Constants";
+import * as path from 'path';
+import { RemoteSocket, Server as SocketIoServer, Socket } from 'socket.io';
+import { io as sockClient } from 'socket.io-client';
+import { URL } from 'url';
+import { config } from '../config/Config';
+import { conn } from '../controller/comms/Comms';
+import { Inbound, Outbound } from '../controller/comms/messages/Messages';
+import { Timestamp, utils } from '../controller/Constants';
 import { sys } from '../controller/Equipment';
-import { state } from "../controller/State";
-import { logger } from "../logger/Logger";
+import { state } from '../controller/State';
+import { logger } from '../logger/Logger';
 import { HttpInterfaceBindings } from './interfaces/httpInterface';
 import { InfluxInterfaceBindings } from './interfaces/influxInterface';
 import { MqttInterfaceBindings } from './interfaces/mqttInterface';
-import { RuleInterfaceBindings } from "./interfaces/ruleInterface";
-import { ConfigRoute } from "./services/config/Config";
-import { ConfigSocket } from "./services/config/ConfigSocket";
-import { StateRoute } from "./services/state/State";
-import { StateSocket } from "./services/state/StateSocket";
-import { UtilitiesRoute } from "./services/utilities/Utilities";
+import { RuleInterfaceBindings } from './interfaces/ruleInterface';
+import { ConfigRoute } from './services/config/Config';
+import { ConfigSocket } from './services/config/ConfigSocket';
+import { StateRoute } from './services/state/State';
+import { StateSocket } from './services/state/StateSocket';
+import { UtilitiesRoute } from './services/utilities/Utilities';
 import express = require('express');
-import extend = require("extend");
+import extend = require('extend');
 import { setTimeout as setTimeoutSync } from 'timers';
 import { setTimeout } from 'timers/promises';
 
@@ -97,7 +97,7 @@ export class WebServer {
             }
             this.initInterfaces(cfg.interfaces);
 
-        } catch (err) { logger.error(`Error initializing web server ${err.message}`) }
+        } catch (err) { logger.error(`Error initializing web server ${err.message}`); }
     }
     public async initInterfaces(interfaces: any) {
         try {
@@ -167,7 +167,7 @@ export class WebServer {
                     this._servers[s] = undefined;
                 } catch (err) { console.log(`Error stopping server ${s}: ${err.message}`); }
             }
-        } catch (err) { `Error stopping servers` }
+        } catch (err) { `Error stopping servers`; }
     }
     private getInterface() {
         const networkInterfaces = os.networkInterfaces();
@@ -196,7 +196,7 @@ export class WebServer {
         // looking for the first IPv4 interface that has a mac address which will be the scope-local address.  However, in the future we can simply use the IPv6 interface
         // if that is returned on the local scope but I don't know if the node ssdp server supports it on all platforms.
         let ips = [];
-        let nics = { physical: [], virtual: [] }
+        let nics = { physical: [], virtual: [] };
         for (let name in networkInterfaces) {
             let nic = networkInterfaces[name];
             for (let ndx in nic) {
@@ -218,7 +218,7 @@ export class WebServer {
     }
     public ip() { return typeof this.getInterface() === 'undefined' ? '0.0.0.0' : this.getInterface().address; }
     public mac() { return typeof this.getInterface() === 'undefined' ? '00:00:00:00' : this.getInterface().mac; }
-    public httpPort(): number { return this._httpPort }
+    public httpPort(): number { return this._httpPort; }
     public findServer(name: string): ProtoServer { return this._servers.find(elem => elem.name === name); }
     public findServersByType(type: string) { return this._servers.filter(elem => elem.type === type); }
     public findServerByGuid(uuid: string) { return this._servers.find(elem => elem.uuid === uuid); }
@@ -283,7 +283,7 @@ export class WebServer {
                     }
                 }
             }
-            backups.sort((a, b) => { return Date.parse(b.options.backupDate) - Date.parse(a.options.backupDate) });
+            backups.sort((a, b) => { return Date.parse(b.options.backupDate) - Date.parse(a.options.backupDate); });
             return backups;
         }
         catch (err) { logger.error(`Error reading backup file directory: ${err.message}`); }
@@ -291,7 +291,7 @@ export class WebServer {
     protected async extractBackupOptions(file: string | Buffer): Promise<{ file: string, options: any }> {
         try {
             let opts = { file: Buffer.isBuffer(file) ? 'Buffer' : file, options: {} as any };
-            let jszip = require("jszip");
+            let jszip = require('jszip');
             let buff = Buffer.isBuffer(file) ? file : fs.readFileSync(file);
             await jszip.loadAsync(buff).then(async (zip) => {
                 await zip.file('options.json').async('string').then((data) => {
@@ -333,7 +333,7 @@ export class WebServer {
         let ret = new BackupFile();
         ret.options = extend(true, {}, opts, { version: 1.1, errors: [] });
         //{ file: '', options: extend(true, {}, opts, { version: 1.0, errors: [] }) };
-        let jszip = require("jszip");
+        let jszip = require('jszip');
         function pad(n) { return (n < 10 ? '0' : '') + n; }
         let zip = new jszip();
         let ts = new Date();
@@ -448,7 +448,7 @@ export class WebServer {
                             for (let j = 0; j < srvs.length; j++){
                                 if (srvs[j].cfg.options.host === cfg.serverConfig.options.host){
                                     srv = srvs[j];
-                                    ctx.server.warnings.push(`REM Server from backup file (${srv.uuid}/${srv.cfg.options.host}) matched to current REM Server (${cfg.uuid}/${cfg.serverConfig.options.host}) by host name or IP and not UUID.  UUID in current config.json for REM will be updated.`)
+                                    ctx.server.warnings.push(`REM Server from backup file (${srv.uuid}/${srv.cfg.options.host}) matched to current REM Server (${cfg.uuid}/${cfg.serverConfig.options.host}) by host name or IP and not UUID.  UUID in current config.json for REM will be updated.`);
                                     break;
                                 }
                             }
@@ -621,12 +621,12 @@ export class HttpServer extends ProtoServer {
             allowEIO3: true,
             cors: {
                 origin: true,
-                methods: ["GET", "POST"],
+                methods: ['GET', 'POST'],
                 credentials: true
             }
-        }
+        };
         this.sockServer = new SocketIoServer(this.server, options);
-        this.sockServer.on("connection", (sock: Socket) => {
+        this.sockServer.on('connection', (sock: Socket) => {
             logger.info(`New socket client connected ${sock.id} -- ${sock.client.conn.remoteAddress}`);
             this.socketHandler(sock);
             sock.emit('controller', state.controllerState);
@@ -666,7 +666,7 @@ export class HttpServer extends ProtoServer {
         setTimeoutSync(async () => {
             // refresh socket list with every new socket
             self._sockets = await self.sockServer.fetchSockets();
-        }, 100)
+        }, 100);
 
         sock.on('error', (err) => {
             logger.error('Error with socket: %s', err);
@@ -689,7 +689,7 @@ export class HttpServer extends ProtoServer {
         sock.on('rawbytes', (data:any)=>{
             let port = conn.findPortById(0);
             port.pushIn(Buffer.from(data));
-        })
+        });
         sock.on('sendLogMessages', function (sendMessages: boolean) {
             logger.silly(`sendLogMessages set to ${sendMessages}`);
             if (!sendMessages) sock.leave('msgLogger');
@@ -718,8 +718,8 @@ export class HttpServer extends ProtoServer {
                 this.server = http.createServer(this.app);
                 if (cfg.httpsRedirect) {
                     var cfgHttps = config.getSection('web').server.https;
-                    this.app.get('*', (res: express.Response, req: express.Request) => {
-                        let host = res.get('host');
+                    this.app.get('/*splat', (req: express.Request, res: express.Response) => {
+                        let host = req.get('host');
                         // Only append a port if there is one declared.  This will be the case for urls that have have an implicit port.
                         host = host.replace(/:\d+$/, typeof cfgHttps.port !== 'undefined' ? ':' + cfgHttps.port : '');
                         return res.redirect('https://' + host + req.url);
@@ -773,7 +773,7 @@ export class HttpServer extends ProtoServer {
                     if (value instanceof Error) {
                         var err = {};
                         Object.getOwnPropertyNames(value).forEach((prop) => {
-                            if (prop === "level") err[prop] = value[prop].replace(/\x1b\[\d{2}m/g, '') // remove color from level
+                            if (prop === 'level') err[prop] = value[prop].replace(/\x1b\[\d{2}m/g, ''); // remove color from level
                             else err[prop] = value[prop];
                         });
                         return err;
@@ -839,7 +839,7 @@ export class HttpsServer extends HttpServer {
                 cert: fs.readFileSync(path.join(process.cwd(), cfg.sslCertFile), 'utf8'),
                 requestCert: false,
                 rejectUnauthorized: false
-            }
+            };
             this.server = https.createServer(opts, this.app);
 
             this.app.use(express.json());
@@ -864,7 +864,7 @@ export class HttpsServer extends HttpServer {
                 if (value instanceof Error) {
                     var err = {};
                     Object.getOwnPropertyNames(value).forEach((prop) => {
-                        if (prop === "level") err[prop] = value[prop].replace(/\x1b\[\d{2}m/g, '') // remove color from level
+                        if (prop === 'level') err[prop] = value[prop].replace(/\x1b\[\d{2}m/g, ''); // remove color from level
                         else err[prop] = value[prop];
                     });
                     return err;
@@ -894,13 +894,13 @@ export class HttpsServer extends HttpServer {
             this.isRunning = true;
         }
         catch (err) {
-            logger.error(`Error starting up https server: ${err}`)
+            logger.error(`Error starting up https server: ${err}`);
         }
     }
 }
 export class SsdpServer extends ProtoServer {
     // Simple service discovery protocol
-    public server: ssdp.Server; //node-ssdp;
+    public server: SsdpAdvertiser;
     public deviceUUID: string;
     public upnpPath: string;
     public modelName: string;
@@ -920,35 +920,11 @@ export class SsdpServer extends ProtoServer {
             // todo: should probably check if http/https is enabled at this point
             //let port = config.getSection('web').servers.http.port || 7777;
             this.upnpPath = 'http://' + webApp.ip() + ':' + webApp.httpPort() + '/upnp.xml';
-            let nics = webApp.getNetworkInterfaces();
-            let SSDP = ssdp.Server;
-            if (nics.physical.length + nics.virtual.length > 1) {
-                // If there are multiple nics (docker...etc) then
-                // this will bind on all of them.
-                this.server = new SSDP({
-                    //customLogger: (...args) => console.log.apply(null, args),
-                    logLevel: 'INFO',
-                    udn: this.deviceUUID,
-                    location: {
-                        protocol: 'http://',
-                        port: webApp.httpPort(),
-                        path: '/upnp.xml'
-                    },
-                    explicitSocketBind: true,
-                    sourcePort: 1900
-                });
-            }
-            else {
-                this.server = new SSDP({
-                    //customLogger: (...args) => console.log.apply(null, args),
-                    logLevel: 'INFO',
-                    udn: this.deviceUUID,
-                    location: this.upnpPath,
-                    sourcePort: 1900
-                });
-
-
-            }
+            this.server = new SsdpAdvertiser({
+                udn: this.deviceUUID,
+                location: this.upnpPath,
+                sourcePort: 1900
+            });
             this.server.addUSN('upnp:rootdevice'); // This line will make the server show up in windows.
             this.server.addUSN(this.deviceType);
             // start the server
@@ -966,7 +942,7 @@ export class SsdpServer extends ProtoServer {
     public deviceXML(): string {
         let ver = sys.appVersion.split('.');
         let friendlyName = 'njsPC: unknown model';
-        if (typeof sys !== 'undefined' && typeof sys.equipment !== 'undefined' && typeof sys.equipment.model !== 'undefined') friendlyName = `${sys.equipment.model}`
+        if (typeof sys !== 'undefined' && typeof sys.equipment !== 'undefined' && typeof sys.equipment.model !== 'undefined') friendlyName = `${sys.equipment.model}`;
         let XML = `<?xml version="1.0"?>
         <root xmlns="urn:schemas-upnp-org:device-1-0">
             <specVersion>
@@ -1132,7 +1108,7 @@ export class HttpInterfaceServer extends ProtoServer {
     public initBindings(cfg): boolean {
         let self = this;
         try {
-            this.bindingsPath = path.posix.join(process.cwd(), "/web/bindings") + '/' + cfg.fileName;
+            this.bindingsPath = path.posix.join(process.cwd(), '/web/bindings') + '/' + cfg.fileName;
             let fileTime = new Date(0).valueOf();
             fs.watch(this.bindingsPath, (event, fileName) => {
                 if (fileName && event === 'change') {
@@ -1212,7 +1188,7 @@ export class RuleInterfaceServer extends ProtoServer {
     public initBindings(cfg): boolean {
         let self = this;
         try {
-            this.bindingsPath = path.posix.join(process.cwd(), "/web/bindings") + '/' + cfg.fileName;
+            this.bindingsPath = path.posix.join(process.cwd(), '/web/bindings') + '/' + cfg.fileName;
             let fileTime = new Date(0).valueOf();
             fs.watch(this.bindingsPath, (event, fileName) => {
                 if (fileName && event === 'change') {
@@ -1293,7 +1269,7 @@ export class InfluxInterfaceServer extends ProtoServer {
     public initBindings(cfg): boolean {
         let self = this;
         try {
-            this.bindingsPath = path.posix.join(process.cwd(), "/web/bindings") + '/' + cfg.fileName;
+            this.bindingsPath = path.posix.join(process.cwd(), '/web/bindings') + '/' + cfg.fileName;
             fs.watch(this.bindingsPath, (event, fileName) => {
                 if (fileName && event === 'change') {
                     if (self._isLoading) return; // Need a debounce here.  We will use a semaphore to cause it not to load more than once.
@@ -1367,7 +1343,7 @@ export class MqttInterfaceServer extends ProtoServer {
     public initBindings(cfg): boolean {
         let self = this;
         try {
-            this.bindingsPath = path.posix.join(process.cwd(), "/web/bindings") + '/' + cfg.fileName;
+            this.bindingsPath = path.posix.join(process.cwd(), '/web/bindings') + '/' + cfg.fileName;
             let fileTime = new Date(0).valueOf();
             fs.watch(this.bindingsPath, (event, fileName) => {
                 if (fileName && event === 'change') {
@@ -1426,7 +1402,7 @@ export class REMInterfaceServer extends ProtoServer {
                     await self.initConnection();
                 }
                 catch (err) {
-                    logger.error(`Error establishing bi-directional Nixie/REM connection: ${err}`)
+                    logger.error(`Error establishing bi-directional Nixie/REM connection: ${err}`);
                 }
             }, 5000);
         }
@@ -1589,7 +1565,7 @@ export class REMInterfaceServer extends ProtoServer {
                 // First, send the connection info for njsPC and see if a connection exists.
                 let url = '/config/checkconnection/';
                 // can & should extend for https/username-password/ssl
-                let data: any = { type: "njspc", isActive: true, id: null, name: "njsPC - automatic", protocol: "http:", ipAddress: webApp.ip(), port: config.getSection('web').servers.http.port || 4200, userName: "", password: "", sslKeyFile: "", sslCertFile: "", hostnames: [] }
+                let data: any = { type: 'njspc', isActive: true, id: null, name: 'njsPC - automatic', protocol: 'http:', ipAddress: webApp.ip(), port: config.getSection('web').servers.http.port || 4200, userName: '', password: '', sslKeyFile: '', sslCertFile: '', hostnames: [] };
                 if (typeof this.cfg.options !== 'undefined' && this.cfg.options.host !== 'undefined' &&
                     this.cfg.options.host.toLowerCase() === 'localhost' || this.cfg.options.host === '127.0.0.1') data.loopback = true;
                 logger.info(`Checking REM Connection ${data.name} ${data.ipAddress}:${data.port}`);
@@ -1606,18 +1582,18 @@ export class REMInterfaceServer extends ProtoServer {
                 // The passed connection has been setup/verified; now test for emit
                 // if this fails, it could be because the remote connection is disabled.  We will not 
                 // automatically re-enable it
-                url = '/config/checkemit'
-                data = { eventName: "checkemit", property: "result", value: 'success', connectionId: result.obj.id }
+                url = '/config/checkemit';
+                data = { eventName: 'checkemit', property: 'result', value: 'success', connectionId: result.obj.id };
                 // wait for REM server to finish resetting
                 setTimeoutSync(async () => {
                     try {
-                        let _tmr = setTimeoutSync(() => { return reject(new Error(`initConnection: No socket response received.  Check REM→njsPC communications.`)) }, 5000);
+                        let _tmr = setTimeoutSync(() => { return reject(new Error(`initConnection: No socket response received.  Check REM→njsPC communications.`)); }, 5000);
                         let srv: HttpServer = webApp.findServer('http') as HttpServer;
                         srv.addListenerOnce('/checkemit', (data: any) => {
                             // if we receive the emit, data will work both ways.
                             // console.log(data);
                             clearTimeout(_tmr);
-                            logger.info(`${this.name} bi-directional communications established.`)
+                            logger.info(`${this.name} bi-directional communications established.`);
                             resolve();
                         });
                         result = await self.putApiService(url, data);
@@ -1657,14 +1633,14 @@ export class REMInterfaceServer extends ProtoServer {
             let ret = new InterfaceServerResponse();
             let opts = extend(true, { headers: {} }, this.cfg.options);
             if ((typeof opts.hostname === 'undefined' || !opts.hostname) && (typeof opts.host === 'undefined' || !opts.host || opts.host === '*')) {
-                ret.error = new Error(`Interface: ${this.cfg.name} has not resolved to a valid host.`)
+                ret.error = new Error(`Interface: ${this.cfg.name} has not resolved to a valid host.`);
                 logger.warn(ret.error);
                 return ret;
             }
             let sbody = typeof data === 'undefined' ? '' : typeof data === 'string' ? data : typeof data === 'object' ? JSON.stringify(data) : data.toString();
             if (typeof sbody !== 'undefined') {
                 if (sbody.charAt(0) === '"' && sbody.charAt(sbody.length - 1) === '"') sbody = sbody.substr(1, sbody.length - 2);
-                opts.headers["CONTENT-LENGTH"] = Buffer.byteLength(sbody || '');
+                opts.headers['CONTENT-LENGTH'] = Buffer.byteLength(sbody || '');
             }
             opts.path = url;
             opts.method = method || 'GET';
@@ -1713,7 +1689,7 @@ export class REMInterfaceServer extends ProtoServer {
                 // We have an http error so let's parse it up.
                 try {
                     ret.error = JSON.parse(ret.data);
-                } catch (err) { ret.error = new Error(`Unidentified ${ret.status.code} Error: ${ret.status.message}`) }
+                } catch (err) { ret.error = new Error(`Unidentified ${ret.status.code} Error: ${ret.status.message}`); }
                 ret.data = '';
             }
             else if (ret.status.code === 200 && this.isJSONString(ret.data)) {
@@ -1829,7 +1805,7 @@ export class BackupFile {
     public errors = [];
     protected async extractBackupOptions(file: string | Buffer) {
         try {
-            let jszip = require("jszip");
+            let jszip = require('jszip');
             let buff = Buffer.isBuffer(file) ? file : fs.readFileSync(file);
             let zip = await jszip.loadAsync(buff);
             await zip.file('options.json').async('string').then((data) => {
@@ -1873,7 +1849,7 @@ export class RestoreFile {
     }
     protected async extractRestoreOptions(file: string | Buffer) {
         try {
-            let jszip = require("jszip");
+            let jszip = require('jszip');
             let buff = Buffer.isBuffer(file) ? file : fs.readFileSync(file);
             let zip = await jszip.loadAsync(buff);
             this.options = await this.extractFile(zip, 'options.json');

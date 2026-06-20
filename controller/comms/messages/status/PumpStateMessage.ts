@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound, Outbound, Protocol } from "../Messages";
-import { state } from "../../../State";
-import { sys, ControllerType } from "../../../Equipment";
-import { conn } from "../../Comms";
-import { logger } from "../../../../logger/Logger";
+import { Inbound, Outbound, Protocol } from '../Messages';
+import { state } from '../../../State';
+import { sys, ControllerType } from '../../../Equipment';
+import { conn } from '../../Comms';
+import { logger } from '../../../../logger/Logger';
 
 export class PumpStateMessage {
     private static detectPumpType(msg: Inbound) {
@@ -156,7 +156,7 @@ export class PumpStateMessage {
             pstate.watts = parseInt(msg.extractPayloadByte(2).toString(16) + msg.extractPayloadByte(3).toString(16), 10);
             pstate.isActive = true;
             pstate.command = (pstate.rpm > 0 || pstate.watts > 0) ? 10 : 0;
-            pstate.driveState
+            pstate.driveState;
             state.emitEquipmentChanges();
         }
     }
@@ -201,7 +201,7 @@ export class PumpStateMessage {
                                 rpmGpm = 'RPM';
                                 break;
                             default:
-                                console.log(`whtat's missing`)
+                                console.log(`whtat's missing`);
                         }
                         let setAmount = 0;
                         if (rpmGpm === 'RPM') {

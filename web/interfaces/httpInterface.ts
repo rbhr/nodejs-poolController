@@ -15,15 +15,15 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { HttpInterfaceServer } from "../../web/Server";
-import * as http2 from "http2";
-import * as http from "http";
-import * as https from "https";
-import extend=require("extend");
-import { logger } from "../../logger/Logger";
-import { PoolSystem, sys } from "../../controller/Equipment";
-import { State, state } from "../../controller/State";
-import { InterfaceContext, InterfaceEvent, BaseInterfaceBindings } from "./baseInterface";
+import { HttpInterfaceServer } from '../../web/Server';
+import * as http2 from 'http2';
+import * as http from 'http';
+import * as https from 'https';
+import extend=require('extend');
+import { logger } from '../../logger/Logger';
+import { PoolSystem, sys } from '../../controller/Equipment';
+import { State, state } from '../../controller/State';
+import { InterfaceContext, InterfaceEvent, BaseInterfaceBindings } from './baseInterface';
 
 export class HttpInterfaceBindings extends BaseInterfaceBindings {
     constructor(cfg) {
@@ -99,7 +99,7 @@ export class HttpInterfaceBindings extends BaseInterfaceBindings {
                     // We should now have all the tokens.  Put together the request.
                     if (typeof sbody !== 'undefined') {
                         if (sbody.charAt(0) === '"' && sbody.charAt(sbody.length - 1) === '"') sbody = sbody.substr(1, sbody.length - 2);
-                        opts.headers["CONTENT-LENGTH"] = Buffer.byteLength(sbody || '');
+                        opts.headers['CONTENT-LENGTH'] = Buffer.byteLength(sbody || '');
                     }
                     if (opts.port === 443 || (opts.protocol || '').startsWith('https')) {
                         opts.protocol = 'https:';

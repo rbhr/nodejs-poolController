@@ -15,13 +15,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { state } from "../../../State";
-import { sys, ControllerType } from "../../../Equipment";
-import { logger } from "../../../../logger/Logger";
-import { webApp } from "../../../../web/Server";
-import { Timestamp, utils } from "../../../Constants"
-import { EquipmentStateMessage } from "./EquipmentStateMessage";
+import { Inbound } from '../Messages';
+import { state } from '../../../State';
+import { sys, ControllerType } from '../../../Equipment';
+import { logger } from '../../../../logger/Logger';
+import { webApp } from '../../../../web/Server';
+import { Timestamp, utils } from '../../../Constants';
+import { EquipmentStateMessage } from './EquipmentStateMessage';
 export class IntelliChemStateMessage {
     public static process(msg: Inbound) {
         if (sys.controllerType === ControllerType.Unknown) return;
@@ -258,7 +258,7 @@ export class IntelliChemStateMessage {
         chem.HMIAdvancedDisplay = (msg.extractPayloadByte(35) & 0x20) === 1 ? true : false;
         chem.ph.phSupply = (msg.extractPayloadByte(35) & 0x40) === 1 ? 'acid' : 'base'; // acid pH dosing = 1; base pH dosing = 0;
         //      36-37 : Firmware = 80,1 = 1.080
-        chem.firmware = `${msg.extractPayloadByte(37)}.${msg.extractPayloadByte(36).toString().padStart(3, '0')}`
+        chem.firmware = `${msg.extractPayloadByte(37)}.${msg.extractPayloadByte(36).toString().padStart(3, '0')}`;
         //      38 : Water Chemistry Warning
         // The LSI handling is also stupid with IntelliChem so we are going to have our way with it.
         // schem.warnings.waterChemistry = msg.extractPayloadByte(38);
@@ -303,7 +303,7 @@ export class IntelliChemStateMessage {
                         temps.waterSensor2 = schem.ph.probe.temperature;
                     }
                 }
-                sys.board.system.setTempsAsync(temps).catch(err => logger.error(`Error setting temp compensation for IntelliChem State: ${err.message}`))
+                sys.board.system.setTempsAsync(temps).catch(err => logger.error(`Error setting temp compensation for IntelliChem State: ${err.message}`));
             }
         }
         schem.ph.pump.isDosing = schem.ph.dosingStatus === 0 && chem.ph.enabled;

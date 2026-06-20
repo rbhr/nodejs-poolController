@@ -1,14 +1,14 @@
 import { clearTimeout, setTimeout } from 'timers';
 import { conn } from '../../../controller/comms/Comms';
 import { Outbound, Protocol, Response } from '../../../controller/comms/messages/Messages';
-import { IChemical, IChemController, Chlorinator, ChemController, ChemControllerCollection, ChemFlowSensor, Chemical, ChemicalORP, ChemicalORPProbe, ChemicalPh, ChemicalPhProbe, ChemicalProbe, ChemicalPump, ChemicalTank, sys } from "../../../controller/Equipment";
+import { IChemical, IChemController, Chlorinator, ChemController, ChemControllerCollection, ChemFlowSensor, Chemical, ChemicalORP, ChemicalORPProbe, ChemicalPh, ChemicalPhProbe, ChemicalProbe, ChemicalPump, ChemicalTank, sys } from '../../../controller/Equipment';
 import { logger } from '../../../logger/Logger';
-import { InterfaceServerResponse, webApp } from "../../../web/Server";
+import { InterfaceServerResponse, webApp } from '../../../web/Server';
 import { Timestamp, utils } from '../../Constants';
 import { EquipmentNotFoundError, EquipmentTimeoutError, InvalidEquipmentDataError, InvalidEquipmentIdError, InvalidOperationError } from '../../Errors';
-import { IChemicalState, ChemControllerState, ChemicalChlorState, ChemicalDoseState, ChemicalORPState, ChemicalPhState, ChemicalProbeORPState, ChemicalProbePHState, ChemicalProbeState, ChemicalPumpState, ChemicalState, ChemicalTankState, ChlorinatorState, state } from "../../State";
+import { IChemicalState, ChemControllerState, ChemicalChlorState, ChemicalDoseState, ChemicalORPState, ChemicalPhState, ChemicalProbeORPState, ChemicalProbePHState, ChemicalProbeState, ChemicalPumpState, ChemicalState, ChemicalTankState, ChlorinatorState, state } from '../../State';
 import { ncp } from '../Nixie';
-import { INixieControlPanel, NixieChildEquipment, NixieEquipment, NixieEquipmentCollection } from "../NixieEquipment";
+import { INixieControlPanel, NixieChildEquipment, NixieEquipment, NixieEquipmentCollection } from '../NixieEquipment';
 import { NixieChlorinator } from './Chlorinator';
 export interface INixieChemController {
     bodyOnTime: number;
@@ -821,7 +821,7 @@ export class NixieChemController extends NixieChemControllerBase {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(chem: ChemController, schem: ChemControllerState) {
         try {
@@ -935,7 +935,7 @@ class NixieChemical extends NixieChildEquipment implements INixieChemical {
     public get currentMix(): NixieChemMix { return this._currentMix; }
     public set currentMix(val: NixieChemMix) {
         if (typeof val === 'undefined' && typeof this._currentMix !== 'undefined') logger.debug(`${this.chemical.chemType} mix set to undefined`);
-        else logger.debug(`Set new current mix ${this.chemical.chemType}`)
+        else logger.debug(`Set new current mix ${this.chemical.chemType}`);
         this._currentMix = val;
     }
     constructor(controller: NixieChemController, chemical: Chemical) {
@@ -1048,7 +1048,7 @@ class NixieChemical extends NixieChildEquipment implements INixieChemical {
 
                 else
                     this.currentMix.set({ time: this.chemical.mixingTime, timeMixed: 0 });
-                logger.info(`Chem Controller begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`)
+                logger.info(`Chem Controller begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`);
                 schem.mixTimeRemaining = this.currentMix.timeRemaining;
             }
             if (typeof this._mixTimer === 'undefined' || !this._mixTimer) {
@@ -1061,7 +1061,7 @@ class NixieChemical extends NixieChildEquipment implements INixieChemical {
     public async mixChemicals(schem: IChemicalState, mixingTime?: number): Promise<void> {
         try {
             if (this._stoppingMix) {
-                logger.verbose(`${schem.chemType} is currently stopping mixChemicals ignored.`)
+                logger.verbose(`${schem.chemType} is currently stopping mixChemicals ignored.`);
                 return;
             }
             if (this._processingMix) {
@@ -1297,7 +1297,7 @@ export class NixieChemPump extends NixieChildEquipment {
                         delay = Math.max(0, ((this.chemical.chemical.startDelay * 60) * 1000) - timeElapsed);
                         schem.delayTimeRemaining = Math.max(0, Math.round(delay / 1000));
                         if (delay > 0) {
-                            if (!schem.flowDelay) logger.info(`Chem Controller delay dosing for ${utils.formatDuration(delay / 1000)}`)
+                            if (!schem.flowDelay) logger.info(`Chem Controller delay dosing for ${utils.formatDuration(delay / 1000)}`);
                             else logger.verbose(`Chem pump delay dosing for ${utils.formatDuration(delay / 1000)}`);
                             schem.flowDelay = true;
                         }
@@ -1478,7 +1478,7 @@ export class NixieChemChlor extends NixieChildEquipment {
                 chlor.disabled = false;
                 chlor.isDosing = false;
             }
-            let c = sys.chlorinators.toArray
+            let c = sys.chlorinators.toArray;
         } catch (err) { logger.error(`setChlorAsync: ${err.message}`); return Promise.reject(err); }
     }
     public async stopDosing(schem: IChemicalState, reason: string): Promise<void> {
@@ -1527,7 +1527,7 @@ export class NixieChemChlor extends NixieChildEquipment {
                 await this.chemical.chemController.processAlarms(schem.chemController);
                 let isBodyOn = schem.chemController.flowDetected;
                 await this.chemical.initDose(schem);
-                let chemController = schem.getParent()
+                let chemController = schem.getParent();
                 let schlor = state.chlorinators.getItemById(chlor.id);
                 if (!isBodyOn) {
                     // Make sure the chlor is off.
@@ -1566,7 +1566,7 @@ export class NixieChemChlor extends NixieChildEquipment {
                         }
                     }
                     catch (err) {
-                        logger.error(`Error starting chlorination: ${err}.`)
+                        logger.error(`Error starting chlorination: ${err}.`);
                     }
                     // if we don't reach the chlorinator, we still want to be in dosing status
                     schem.dosingStatus = 0;
@@ -1616,7 +1616,7 @@ export class NixieChemChlor extends NixieChildEquipment {
                 id: chlor.id,
                 disabled: true,
                 isDosing: false
-            })
+            });
             this.isOn = schem.chlor.isDosing = false;
             return cstate;
         }
@@ -1635,7 +1635,7 @@ export class NixieChemChlor extends NixieChildEquipment {
                 id: chlor.id,
                 disabled: false,
                 isDosing: true
-            })
+            });
             this.isOn = schem.chlor.isDosing = true;
             return cstate;
         }
@@ -2217,7 +2217,7 @@ export class NixieChemicalORP extends NixieChemical {
                         this.currentMix.set({ time: this.chlor.chlorInterval * 60, timeMixed: 0 });
                     else
                         this.currentMix.set({ time: this.chemical.mixingTime, timeMixed: 0 });
-                logger.info(`Chem Controller begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`)
+                logger.info(`Chem Controller begin mixing ${schem.chemType} for ${utils.formatDuration(this.currentMix.timeRemaining)} of ${utils.formatDuration(this.currentMix.time)}`);
                 schem.mixTimeRemaining = this.currentMix.timeRemaining;
             }
             if (typeof this._mixTimer === 'undefined' || !this._mixTimer) {
@@ -2365,8 +2365,8 @@ export class NixieChemicalORP extends NixieChemical {
                             // vs the pool.  May be interesting to experiment with.
                             let type = sys.board.valueMaps.bodyTypes.getName(body.type);
                             switch (type) {
-                                case "pool":
-                                case "pool/spa":
+                                case 'pool':
+                                case 'pool/spa':
                                     // normal dosing
                                     break;
                                 default:
@@ -2423,7 +2423,7 @@ export class NixieChemicalORP extends NixieChemical {
                                 percentOfTime *= 1.1;
                             }
                             percentOfTime = Math.min(1, Math.max(0, percentOfTime));
-                            logger.info(`Chlor dosing % of time is ${Math.round(percentOfTime * 10000) / 100}%`)
+                            logger.info(`Chlor dosing % of time is ${Math.round(percentOfTime * 10000) / 100}%`);
                         }
 
                         // convert the % of time back to an amount of chlorine over 15 minutes; 
@@ -2431,7 +2431,7 @@ export class NixieChemicalORP extends NixieChemical {
                         let dose = model.chlorinePerSec * time;
                         
                         if (dose > 0) {
-                            logger.info(`Chem chlor calculated dosing at ${Math.round(percentOfTime * 10000) / 100}% and will dose ${Math.round(dose * 1000000) / 1000000}Lbs of chlorine over the next ${utils.formatDuration(time)}.`)
+                            logger.info(`Chem chlor calculated dosing at ${Math.round(percentOfTime * 10000) / 100}% and will dose ${Math.round(dose * 1000000) / 1000000}Lbs of chlorine over the next ${utils.formatDuration(time)}.`);
                             sorp.startDose(new Date(), 'auto', dose, 0, time, 0);
                             await this.chlor.dose(sorp);
                             return;
@@ -2547,7 +2547,7 @@ export class NixieChemProbePh extends NixieChemProbe {
                         await this.setRemoteREMFeed(disabledFeed);
                     }
                     catch (err){
-                        logger.silly(`Disabling remote REM connection for PH Probe returned error ${err.message}.  Continuing.`)
+                        logger.silly(`Disabling remote REM connection for PH Probe returned error ${err.message}.  Continuing.`);
                     }
                     this.probe.remFeedId = undefined;
                 }
@@ -2594,14 +2594,14 @@ export class NixieChemProbePh extends NixieChemProbe {
                 connectionId: remoteConnectionId,
                 options: { id: this._pmap['parent'].chemController.id },
                 deviceBinding: this.probe.deviceBinding,
-                eventName: "chemController",
-                property: "pHLevel",
+                eventName: 'chemController',
+                property: 'pHLevel',
                 sendValue: 'all',
                 isActive: data.remFeedEnabled,
                 //sampling: 1,
                 //changesOnly: false,
                 propertyDesc: '[chemController].pHLevel'
-            }
+            };
             let res = await NixieChemController.putDeviceService(this.probe.connectionId, '/config/verifyFeed', d);
             if (res.status.code === 200) { this.probe.remFeedEnabled = data.remFeedEnabled; }
             else { logger.warn(`setRemoteREMFeed: Cannot set remote feed. Message:${JSON.stringify(res.status)} for feed: ${JSON.stringify(d)}.`); }
@@ -2618,8 +2618,8 @@ export class NixieChemProbePh extends NixieChemProbe {
                     for (let j = 0; j < device.feeds.length; j++) {
                         let feed = device.feeds[j];
                         if (feed.options.id === chem.id &&
-                            feed.eventName === "chemController" &&
-                            feed.property === "pHLevel" &&
+                            feed.eventName === 'chemController' &&
+                            feed.property === 'pHLevel' &&
                             (feed.sendValue === 'pH' || feed.sendValue === 'all')
                         ) {
                             // if feed is enabled, but probe is disabled; disable feed
@@ -2660,7 +2660,7 @@ export class NixieChemProbeORP extends NixieChemProbe {
                         await this.setRemoteREMFeed(disabledFeed);
                     }
                     catch (err){
-                        logger.silly(`Disabling remote REM connection for ORP Probe returned error ${err.message}.  Continuing.`)
+                        logger.silly(`Disabling remote REM connection for ORP Probe returned error ${err.message}.  Continuing.`);
                     }
                     this.probe.remFeedId = undefined;
                 }
@@ -2690,7 +2690,7 @@ export class NixieChemProbeORP extends NixieChemProbe {
                 //sampling: 1,
                 //changesOnly: false,
                 propertyDesc: '[chemController].orpLevel'
-            }
+            };
             let res = await NixieChemController.putDeviceService(this.probe.connectionId, '/config/verifyFeed', d);
             if (res.status.code === 200) { this.probe.remFeedEnabled = data.remFeedEnabled; }
             else {
@@ -2713,8 +2713,8 @@ export class NixieChemProbeORP extends NixieChemProbe {
                     for (let j = 0; j < device.feeds.length; j++) {
                         let feed = device.feeds[j];
                         if (feed.options.id === chem.id &&
-                            feed.eventName === "chemController" &&
-                            feed.property === "orpLevel" &&
+                            feed.eventName === 'chemController' &&
+                            feed.property === 'orpLevel' &&
                             (feed.sendValue === 'orp' || feed.sendValue === 'all')
                         ) {
                             // if feed is enabled, but probe is disabled; disable feed

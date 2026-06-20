@@ -24,7 +24,7 @@ import { ControllerType } from '../Constants';
 import { PoolSystem } from '../Equipment';
 import { NixieBoard } from './NixieBoard';
 import { AquaLinkBoard } from './AquaLinkBoard';
-import { SunTouchBoard } from "./SunTouchBoard";
+import { SunTouchBoard } from './SunTouchBoard';
 
 
 export class BoardFactory {

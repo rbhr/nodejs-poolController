@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import {Inbound} from "../Messages";
-import { sys, Valve } from "../../../Equipment";
-import { state, ValveState } from "../../../State";
-import { ControllerType } from "../../../Constants";
-import { logger } from "../../../../logger/Logger";
+import {Inbound} from '../Messages';
+import { sys, Valve } from '../../../Equipment';
+import { state, ValveState } from '../../../State';
+import { ControllerType } from '../../../Constants';
+import { logger } from '../../../../logger/Logger';
 export class ValveMessage {
     public static process(msg: Inbound): void {
         switch (sys.controllerType) {
@@ -49,7 +49,7 @@ export class ValveMessage {
                         ValveMessage.processValveNames(msg);
                         break;
                     default:
-                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                         break;
 
                 }
@@ -93,7 +93,7 @@ export class ValveMessage {
             vB.circuit = msg.extractPayloadByte(2);
         }
         vC.circuit = msg.extractPayloadByte(4);
-        vC.name = 'Valve C'
+        vC.name = 'Valve C';
     }
     private static process_ValveAssignment_IT(msg: Inbound) {
         // sample packet

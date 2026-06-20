@@ -15,26 +15,26 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Inbound } from "../Messages";
-import { CircuitMessage } from "./CircuitMessage";
-import { HeaterMessage } from "./HeaterMessage";
-import { FeatureMessage } from "./FeatureMessage";
-import { ScheduleMessage } from "./ScheduleMessage";
-import { PumpMessage } from "./PumpMessage";
-import { RemoteMessage } from "./RemoteMessage";
-import { CircuitGroupMessage } from "./CircuitGroupMessage";
-import { ChlorinatorMessage } from "./ChlorinatorMessage";
-import { ValveMessage } from "./ValveMessage";
-import { GeneralMessage } from "./GeneralMessage";
-import { EquipmentMessage } from "./EquipmentMessage";
-import { SecurityMessage } from "./SecurityMessage";
-import { OptionsMessage } from "./OptionsMessage";
-import { CoverMessage } from "./CoverMessage";
-import { IntellichemMessage } from "./IntellichemMessage";
-import { ControllerType } from "../../../Constants";
+import { Inbound } from '../Messages';
+import { CircuitMessage } from './CircuitMessage';
+import { HeaterMessage } from './HeaterMessage';
+import { FeatureMessage } from './FeatureMessage';
+import { ScheduleMessage } from './ScheduleMessage';
+import { PumpMessage } from './PumpMessage';
+import { RemoteMessage } from './RemoteMessage';
+import { CircuitGroupMessage } from './CircuitGroupMessage';
+import { ChlorinatorMessage } from './ChlorinatorMessage';
+import { ValveMessage } from './ValveMessage';
+import { GeneralMessage } from './GeneralMessage';
+import { EquipmentMessage } from './EquipmentMessage';
+import { SecurityMessage } from './SecurityMessage';
+import { OptionsMessage } from './OptionsMessage';
+import { CoverMessage } from './CoverMessage';
+import { IntellichemMessage } from './IntellichemMessage';
+import { ControllerType } from '../../../Constants';
 import { sys } from '../../../Equipment';
-import { ExternalMessage } from "./ExternalMessage";
-import { logger } from "../../../../logger/Logger";
+import { ExternalMessage } from './ExternalMessage';
+import { logger } from '../../../../logger/Logger';
 
 export class ConfigMessage {
     // Firing up the mobi after changing settings.
@@ -105,7 +105,7 @@ export class ConfigMessage {
                         ExternalMessage.processIntelliCenterState(msg);
                         break;
                     default:
-                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                         break;
                 }
                 break;

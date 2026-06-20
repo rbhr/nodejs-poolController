@@ -19,7 +19,7 @@ import { Inbound } from '../Messages';
 import { sys, Equipment, ExpansionPanel, Body } from '../../../Equipment';
 import { state, BodyTempState } from '../../../State';
 import { ControllerType } from '../../../Constants';
-import { logger } from "../../../../logger/Logger";
+import { logger } from '../../../../logger/Logger';
 export class EquipmentMessage {
     public static process(msg: Inbound): void {
         let pnl: ExpansionPanel;
@@ -201,7 +201,7 @@ export class EquipmentMessage {
                         break;
                     }
                     default:
-                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`)
+                        logger.debug(`Unprocessed Config Message ${msg.toPacket()}`);
                         break;
                 }
                 break;

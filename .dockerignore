@@ -1,0 +1,21 @@
+# Keep build context small and avoid copying host-built (musl-incompatible) artifacts.
+node_modules
+dist
+.git
+.github
+logs
+data
+backups
+replay
+coverage
+.nyc_output
+*.log
+config.json
+poolConfig.json
+poolState.json
+*.crt
+*.key
+users.htpasswd
+.idea
+.vscode
+npm-debug.log*

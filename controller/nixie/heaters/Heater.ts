@@ -2,12 +2,12 @@
 import { utils, Timestamp } from '../../Constants';
 import { logger } from '../../../logger/Logger';
 
-import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from "../NixieEquipment";
-import { Body, Heater, HeaterCollection, sys } from "../../../controller/Equipment";
-import { BodyTempState, HeaterState, state, } from "../../State";
+import { NixieEquipment, NixieChildEquipment, NixieEquipmentCollection, INixieControlPanel } from '../NixieEquipment';
+import { Body, Heater, HeaterCollection, sys } from '../../../controller/Equipment';
+import { BodyTempState, HeaterState, state, } from '../../State';
 import { setTimeout, clearTimeout } from 'timers';
 import { NixieControlPanel } from '../Nixie';
-import { webApp, InterfaceServerResponse } from "../../../web/Server";
+import { webApp, InterfaceServerResponse } from '../../../web/Server';
 import { conn } from '../../../controller/comms/Comms';
 import { Inbound, Outbound, Protocol, Response } from '../../../controller/comms/messages/Messages';
 import { delayMgr } from '../../Lockouts';
@@ -237,7 +237,7 @@ export class NixieGasHeater extends NixieHeaterBase {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Heater Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Heater Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(heater: Heater, hstate: HeaterState) {
         try {
@@ -318,8 +318,8 @@ export class NixieSolarHeater extends NixieHeaterBase {
             // In this instance we need to see if there are cleaner circuits that we need to turn off
             // then delay for the current body because the solar just came on.
             if (hstate.isOn && sys.general.options.cleanerSolarDelay && !origState) {
-                let arrTypes = sys.board.valueMaps.circuitFunctions.toArray().filter(x => { return x.name.indexOf('cleaner') !== -1 && x.body === hstate.bodyId });
-                let cleaners = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type }) !== -1 });
+                let arrTypes = sys.board.valueMaps.circuitFunctions.toArray().filter(x => { return x.name.indexOf('cleaner') !== -1 && x.body === hstate.bodyId; });
+                let cleaners = sys.circuits.filter(x => { return arrTypes.findIndex(t => { return t.val === x.type; }) !== -1; });
                 // Turn off all the cleaner circuits and set an on delay if they are on.
                 for (let i = 0; i < cleaners.length; i++) {
                     let cleaner = cleaners.getItemByIndex(i);
@@ -350,7 +350,7 @@ export class NixieSolarHeater extends NixieHeaterBase {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Heater Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Heater Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(heater: Heater, hstate: HeaterState) {
         try {
@@ -437,7 +437,7 @@ export class NixieHeatpump extends NixieHeaterBase {
         try {
             let dev = await NixieEquipment.getDeviceService(connectionId, `/status/device/${deviceBinding}`);
             return dev;
-        } catch (err) { logger.error(`Nixie Heatpump Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true } }
+        } catch (err) { logger.error(`Nixie Heatpump Error checkHardwareStatusAsync: ${err.message}`); return { hasFault: true }; }
     }
     public async validateSetupAsync(heater: Heater, hstate: HeaterState) {
         try {
@@ -494,7 +494,7 @@ export class NixieUltratemp extends NixieHeaterBase {
         catch (err) { logger.error(`Error polling UltraTemp heater - ${err}`); }
         finally {
             this.suspendPolling = false; if (!this.closing) this._pollTimer = setTimeout(async () => {
-                try { await self.pollEquipmentAsync() } catch (err) { }
+                try { await self.pollEquipmentAsync(); } catch (err) { }
             }, this.pollingInterval || 10000);
         }
     }
@@ -632,7 +632,7 @@ export class NixieJxiHeater extends NixieHeaterBase {
         finally {
             this.suspendPolling = false;
             if (!this.closing) this._pollTimer = setTimeout(async () => {
-                try { await self.pollEquipmentAsync() } catch (err) { }
+                try { await self.pollEquipmentAsync(); } catch (err) { }
             }, this.pollingInterval || 15000);
         }
     }
@@ -736,7 +736,7 @@ export class NixieMastertemp extends NixieGasHeater {
         catch (err) { logger.error(`Error polling MasterTemp heater - ${err}`); }
         finally {
             this.suspendPolling = false; if (!this.closing) this._pollTimer = setTimeout(async () => {
-                try { await self.pollEquipmentAsync() } catch (err) { }
+                try { await self.pollEquipmentAsync(); } catch (err) { }
             }, this.pollingInterval || 3000);
         }
     }
@@ -813,7 +813,7 @@ export class NixieUltraTempETi extends NixieHeaterBase {
         catch (err) { logger.error(`Error polling UltraTemp ETi heater - ${err}`); }
         finally {
             this.suspendPolling = false; if (!this.closing) this._pollTimer = setTimeout(async () => {
-                try { await self.pollEquipmentAsync() } catch (err) { }
+                try { await self.pollEquipmentAsync(); } catch (err) { }
             }, this.pollingInterval || 10000);
         }
     }

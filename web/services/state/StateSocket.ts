@@ -15,11 +15,11 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { state, ICircuitState, LightGroupState } from "../../../controller/State";
-import { sys, ChemController, Circuit, Feature } from "../../../controller/Equipment";
+import { state, ICircuitState, LightGroupState } from '../../../controller/State';
+import { sys, ChemController, Circuit, Feature } from '../../../controller/Equipment';
 import { utils } from '../../../controller/Constants';
-import { logger } from "../../../logger/Logger";
-import { ServiceParameterError } from "../../../controller/Errors";
+import { logger } from '../../../logger/Logger';
+import { ServiceParameterError } from '../../../controller/Errors';
 import { Socket } from 'socket.io';
 export class StateSocket {
     public static initSockets(sock: Socket) {
@@ -108,7 +108,7 @@ export class StateSocket {
                 let id = parseInt(data.id, 10);
                 let filter = sys.filters.find(elem => elem.id === id);
                 if (typeof filter !== 'undefined' && filter.isActive && !isNaN(filter.id)) {
-                    let sfilter = state.filters.getItemById(filter.id, filter.isActive)
+                    let sfilter = state.filters.getItemById(filter.id, filter.isActive);
                     let pu = sys.board.valueMaps.pressureUnits.transform(filter.pressureUnits);
                     if (typeof data.pressure !== 'undefined')
                         await sys.board.filters.setFilterPressure(filter.id, data.pressure, data.pressureUnits || pu.name);
