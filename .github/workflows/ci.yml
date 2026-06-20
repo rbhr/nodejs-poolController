@@ -37,6 +37,8 @@ jobs:
 
   docker:
     name: Docker image builds
+    # On master, publish.yml already builds & pushes; only smoke-build on PRs here.
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
