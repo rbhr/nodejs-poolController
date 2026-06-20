@@ -1,5 +1,11 @@
 name: Publish Docker Image
 
+# Builds each architecture on a NATIVE runner (no QEMU) and merges them into a
+# single multi-arch manifest, then mirrors that manifest to Docker Hub.
+# QEMU-emulated builds of the native serialport addon were timing out (>6h),
+# so emulation is avoided entirely. linux/arm/v7 (32-bit) is dropped — there is
+# no native 32-bit ARM runner and modern Raspberry Pi OS images are 64-bit.
+
 on:
   push:
     branches:
@@ -8,63 +14,32 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
+env:
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/njspc
+
 jobs:
-  publish:
-    name: Build & publish (GHCR + Docker Hub)
-    runs-on: ubuntu-latest
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Decide which registries to publish to. GHCR is always available via the
-      # built-in GITHUB_TOKEN. Docker Hub is included only when both secrets exist,
-      # so the workflow never fails just because Docker Hub isn't configured yet.
-      - name: Resolve target registries
-        id: cfg
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Prepare platform pair
         run: |
-          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          images="ghcr.io/${owner}/njspc"
-          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
-            images="${images}"$'\n'"docker.io/${DOCKERHUB_USERNAME}/njspc"
-            echo "dockerhub=true" >> "$GITHUB_OUTPUT"
-            echo "Publishing to: GHCR + Docker Hub"
-          else
-            echo "dockerhub=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Docker Hub secrets (DOCKERHUB_USERNAME / DOCKERHUB_TOKEN) not set — publishing to GHCR only."
-          fi
-          {
-            echo "images<<EOF"
-            echo "$images"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ steps.cfg.outputs.images }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.title=njspc
-            org.opencontainers.image.description=Pentair pool controller bridge
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -76,6 +51,97 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=njspc
+            org.opencontainers.image.description=Pentair pool controller bridge
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,mode=max,scope=${{ env.PLATFORM_PAIR }}
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Merge & publish manifest
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Resolve Docker Hub availability
+        id: cfg
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "dockerhub=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dockerhub=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Docker Hub secrets (DOCKERHUB_USERNAME / DOCKERHUB_TOKEN) not set — publishing to GHCR only."
+          fi
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create multi-arch manifest on GHCR
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect GHCR image
+        run: docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
       - name: Login to Docker Hub
         if: ${{ steps.cfg.outputs.dockerhub == 'true' }}
         uses: docker/login-action@v3
@@ -83,18 +149,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Echo published tags
+      - name: Mirror manifest to Docker Hub
+        if: ${{ steps.cfg.outputs.dockerhub == 'true' }}
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          echo "Published the following tags:"
-          echo "${{ steps.meta.outputs.tags }}"
+          src="${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}"
+          # Copy the just-built multi-arch index to each Docker Hub tag (no rebuild).
+          echo "$DOCKER_METADATA_OUTPUT_JSON" | jq -r '.tags[]' | while read -r ref; do
+            tag="${ref##*:}"
+            docker buildx imagetools create -t "docker.io/${DOCKERHUB_USERNAME}/njspc:${tag}" "$src"
+          done
+
+      - name: Summary
+        run: |
+          echo "Published tags:" >> "$GITHUB_STEP_SUMMARY"
+          echo "$DOCKER_METADATA_OUTPUT_JSON" | jq -r '.tags[] | "- " + .' >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.cfg.outputs.dockerhub }}" = "true" ]; then
+            echo "- (mirrored to docker.io/${{ secrets.DOCKERHUB_USERNAME }}/njspc)" >> "$GITHUB_STEP_SUMMARY"
+          fi
